@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <math.h>
 
 #include "error_handler.h"
 #include "stack_creation.h"
@@ -168,4 +169,21 @@ Stack_Err_t StackOut ( Stack_t* stack ) {
 
     return status;
 
+}
+
+/*-----------------------------------------------------------------------------------------------*/
+
+Stack_Err_t StackSqrt ( Stack_t* stack ) {
+
+    Stack_Err_t status = STK_SUCCSESFUL;
+
+    STK_ELM_TYPE element_1 = 0;
+
+    status = StackPop ( stack, &element_1 );
+    STK_STATUS_CHECK
+
+    StackPush ( stack, sqrt( element_1 ) );
+    STK_STATUS_CHECK
+
+    return status;
 }

@@ -5,6 +5,7 @@
 #include "cmd_processor.h"
 #include "error_handler.h"
 #include "calc_comands.h"
+#include "colors.h"
 
 
 const size_t max_cmd_line_size = 100;
@@ -115,6 +116,43 @@ Proc_Err_t CmdInterpreter ( const char* input_file_name,
 
 
 
+Proc_Err_t CmdInterpreter_TEST ( const char* input_file_name,
+                                 Stack_t* stack, Stack_Err_t stack_status ) {
+
+    Proc_Err_t status = Proc_Err_t::PRC_SUCCSESFUL;
+
+    FILE* input_file = fopen ( input_file_name, "r" );
+
+    if ( input_file == nullptr ) 
+        return Proc_Err_t::FILE_OPEN_ERR;
+
+    char* cmd_line = (char*) calloc ( max_cmd_line_size, sizeof(char) );
+
+    while ( fgets ( cmd_line, max_cmd_line_size, input_file ) ) {
+
+        int cmd_code = 0;
+        long argument = 0;
+
+        int elments = sscanf ( cmd_line, "%d %ld", &cmd_code, &argument );
+
+        if ( elments == 0 ) continue;
+
+        stack_status = InterpretCmdHandler ( stack, cmd_code, argument );
+
+        if ( cmd_code == InterpretCmds::HLT ) return status;
+
+    }
+        
+        if ( stack_status != Stack_Err_t::STK_SUCCSESFUL ) return Proc_Err_t::ERR_IN_STACK_TERMINATION;
+
+    free(cmd_line);
+
+    return status;
+    
+}
+
+
+
 Stack_Err_t InterpretCmdHandler ( Stack_t* stack, int cmd_code, long argument ) {
 
     Stack_Err_t status = Stack_Err_t::STK_SUCCSESFUL;
@@ -122,36 +160,52 @@ Stack_Err_t InterpretCmdHandler ( Stack_t* stack, int cmd_code, long argument ) 
     switch ( cmd_code ) {
 
         case InterpretCmds::PUSH:
+        {
             status = StackPush ( stack, argument );
-            break;
-
-        case InterpretCmds::POP:
-            //Its a dificult(not essential) case
-            break;
-
+            return status;
+        }
+        case InterpretCmds::POP: 
+        {
+            STK_ELM_TYPE value_pop = 0;
+            status = StackPop ( stack, &value_pop );
+            // printf ( "[POP VALUE]: %s%ld%s", BLUE, value_pop, RES_COL );
+            return status;
+        }
         case InterpretCmds::SUM:
+        {
             status = StackSum ( stack );
-            break;
-          
+            return status;
+        } 
         case InterpretCmds::SUB:
+        {
             status = StackSub ( stack );
-            break;
-
+            return status;
+        }
         case InterpretCmds::DIV:
+        {
             status = StackDiv ( stack );
-            break;
-
+            return status;
+        }
         case InterpretCmds::MULT:
+        {
             status = StackMult ( stack );
-            break;
-
+            return status;
+        }
+        case InterpretCmds::SQRT:
+        {
+            status = StackSqrt ( stack );
+            return status;
+        }
         case InterpretCmds::OUT:
+        {
             status = StackOut ( stack );
-            break;
-
+            return status;
+        }
         case InterpretCmds::HLT:
+        {
             printf( "[END OF PROGRAM]\n" );
-            break;
+            return status;
+        }
 
     }
 

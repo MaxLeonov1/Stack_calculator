@@ -13,5 +13,6 @@ Stack_Err_t StackSub        ( Stack_t* stack );
 Stack_Err_t StackMult       ( Stack_t* stack );
 Stack_Err_t StackDiv        ( Stack_t* stack );
 Stack_Err_t StackOut        ( Stack_t* stack );
+Stack_Err_t StackSqrt       ( Stack_t* stack );
 
 #endif

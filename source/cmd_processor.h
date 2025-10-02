@@ -20,8 +20,9 @@ static Cmd_Instr Asmblr_Cmd_Instr[] = {
     {"SUB",  4, 0},
     {"DIV",  5, 0},
     {"MULT", 6, 0},
-    {"OUT",  7, 0},
-    {"HLT",  8, 0},
+    {"SQRT", 7, 0},
+    {"OUT",  8, 0},
+    {"HLT",  9, 0},
 
 };
 
@@ -33,8 +34,9 @@ typedef enum { //just for understanding cmd in handler cases
     SUB  = 4,
     DIV  = 5,
     MULT = 6,
-    OUT  = 7,
-    HLT  = 8,
+    SQRT = 7,
+    OUT  = 8,
+    HLT  = 9,
 
 } InterpretCmds;
 
