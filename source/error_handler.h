@@ -1,0 +1,85 @@
+#ifndef __ERR_HANDL__
+#define __ERR_HANDL__
+
+typedef enum {
+
+    PRC_SUCCSESFUL = 0,
+    UNDEF_COMAND_ERR = 1,
+    INCOR_ARG_NUM_ERR = 2,
+    FILE_OPEN_ERR = 3,
+    ERR_IN_STACK_TERMINATION = 4,
+
+
+} Proc_Err_t;
+
+typedef enum {
+
+    STK_SUCCSESFUL = 0,  
+    ZERO_CAPACITY_ERROR = 1,
+    SIZE_OVERFLOW_ERROR = 2,
+    STACK_ALLOCATION_ERROR = 3,
+    ZERO_SIZE_ERROR = 4,
+
+} Stack_Err_t;
+
+
+#define STK_STATUS_CHECK if ( status != Stack_Err_t::STK_SUCCSESFUL ) return status;
+#define PROC_STATUS_CHECK if ( status != Proc_Err_t::PRC_SUCCSESFUL ) return status;
+
+/*-------------------------------------------------------*/
+//#define DEBUG
+
+const int CANARY_NUM = 0xFEE1DEAD;
+const int POISON_NUM = 0xDEADFA11;
+
+typedef long STK_ELM_TYPE;
+/*-------------------------------------------------------*/
+
+typedef struct {
+
+    #ifdef DEBUG
+
+    int   line_num;
+    char* file_name;
+    char* stack_name;
+
+    long sum_elm_check;
+
+    #endif
+
+    STK_ELM_TYPE* data;
+    size_t        size;
+    size_t        capacity;
+
+} Stack_t;
+
+/*-------------------------------------------------------*/
+
+#ifdef DEBUG
+
+#define STK_INIT( name ) Stack_t name = { \
+.line_num = __LINE__, \
+.file_name = __FILE__, \
+.stack_name = #name, \
+.sum_elm_check = 0, \
+.data = nullptr, \
+.size = 0, \
+.capacity = 0 };               
+
+#else
+
+#define STK_INIT( name ) Stack_t name = { \
+.data = nullptr, \
+.size = 0, \
+.capacity = 0 };                   
+
+
+#endif
+
+
+
+
+void        PrintStackElements      ( Stack_t* stack );
+const char* DataSpecialParamHandler ( STK_ELM_TYPE param );
+
+#endif
