@@ -1,8 +1,20 @@
-#ifndef __ASSMBLR__
-#define __ASSMBLR__
+#ifndef __CMD_PROC__
+#define __CMD_PROC__
 
 #include "error_handler.h"
 #include "stack_creation.h"
+
+
+
+typedef struct {
+
+    int   cur_com_ind = 0;
+    long* cmd_buffer  = nullptr;
+    int   reg_buf[5]  = {0};
+
+} Cmd_Proc;
+
+/*-------------------------------------------------------*/
 
 typedef struct {
 
@@ -12,19 +24,7 @@ typedef struct {
 
 } Cmd_Instr;
 
-static Cmd_Instr Asmblr_Cmd_Instr[] = {
-
-    {"PUSH", 1, 1},
-    {"POP",  2, 0},
-    {"SUM",  3, 0},
-    {"SUB",  4, 0},
-    {"DIV",  5, 0},
-    {"MULT", 6, 0},
-    {"SQRT", 7, 0},
-    {"OUT",  8, 0},
-    {"HLT",  9, 0},
-
-};
+/*-------------------------------------------------------*/
 
 typedef enum { //just for understanding cmd in handler cases
 

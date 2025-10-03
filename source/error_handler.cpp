@@ -9,6 +9,8 @@
 
 void PrintStackElements ( Stack_t* stack ) {
 
+    printf("-----------------------------------------------\n");
+
     for ( size_t ind = 0; ind < stack->capacity; ind++) {
 
         if ( ind < stack->size ) {
@@ -28,6 +30,8 @@ void PrintStackElements ( Stack_t* stack ) {
         }
             
     }
+
+    printf("-----------------------------------------------\n");
 
 }
 
