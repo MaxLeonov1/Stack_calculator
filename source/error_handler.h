@@ -8,6 +8,7 @@ typedef enum {
     INCOR_ARG_NUM_ERR = 2,
     FILE_OPEN_ERR = 3,
     ERR_IN_STACK_TERMINATION = 4,
+    UNDEF_REGISTR_NUM_ERR = 5,
 
 
 } Proc_Err_t;

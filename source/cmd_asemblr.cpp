@@ -10,6 +10,8 @@
 const size_t max_cmd_line_size = 100;
 const size_t max_cmd_size = 20;
 
+const int proc_reg_num = 5;
+
 
 Proc_Err_t CmdAssmblr ( const char* input_file_name, const char* output_file_name ) {
 
@@ -25,27 +27,20 @@ Proc_Err_t CmdAssmblr ( const char* input_file_name, const char* output_file_nam
 
     while ( fgets ( cmd_line, max_cmd_line_size, input_file ) ) {
 
-        char* comand = (char*) calloc ( max_cmd_size, sizeof(char) );
-        int cmd_code = 0;
-        Cmd_Arg arg  = {0};
-        int elments  = 0;
+        char comand[max_cmd_size] = {0};
+
+        int  cmd_code = 0;
+        long arg      = 0;
+        int  elements = 0;
         
-        elments += sscanf ( cmd_line, "%s %ld", comand, &arg.digit);
-        // elments += sscanf ( cmd_line, "%ld", &arg.digit);
+        elements = sscanf ( cmd_line, "%s %ld", comand, &arg );
 
-        // printf("%s %ld\n", comand, arg.digit);
-        // printf("%d\n", elments);
+        if ( elements == 0 ) continue;
 
-        if ( elments == 0 ) continue;
+        status = CmdConvToCode ( elements, comand, &cmd_code );
+        PROC_STATUS_CHECK
 
-        status = CmdConvToCode ( comand, elments, &cmd_code );
-
-        if ( status != Proc_Err_t::PRC_SUCCSESFUL )
-            return status;
-
-        fprintf ( output_file, "%d %ld\n", cmd_code, arg.digit );
-
-        free(comand);
+        fprintf ( output_file, "%d %ld ", cmd_code, arg );
 
     }
 
@@ -59,13 +54,17 @@ Proc_Err_t CmdAssmblr ( const char* input_file_name, const char* output_file_nam
 
 
 
-Proc_Err_t CmdConvToCode ( char* command, int elements, int* cmd_code ) {
+Proc_Err_t CmdConvToCode ( int elements, char* command, int* cmd_code ) {
+
+    Proc_Err_t status = Proc_Err_t::PRC_SUCCSESFUL;
 
     for ( size_t ind = 0; ind < sizeof(Asmblr_Cmd_Instr) / sizeof(Asmblr_Cmd_Instr[0]); ind++ ) {
 
         if ( strcmp ( command, Asmblr_Cmd_Instr[ind].name) == 0) { 
 
             *cmd_code = Asmblr_Cmd_Instr[ind].cmd_code;
+
+            PROC_STATUS_CHECK
 
             //printf("%d %s\n", *cmd_code, Asmblr_Cmd_Instr[ind].name );
             

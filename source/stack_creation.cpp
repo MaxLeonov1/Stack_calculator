@@ -29,10 +29,10 @@ Stack_Err_t StackCtor ( Stack_t* stack, size_t capacity ) {
 
     for ( size_t ind = 0; ind < capacity; ind++ ) stack->data[ind] = POISON_NUM;
 
-    // #ifdef DEBUG
-    // stack->data[0] = CANARY_NUM;
-    // stack->data[capacity + 1] = CANARY_NUM;
-    // #endif
+    #ifdef DEBUG
+    stack->data[0] = CANARY_NUM;
+    stack->data[capacity + 1] = CANARY_NUM;
+    #endif
 
     return status;
 

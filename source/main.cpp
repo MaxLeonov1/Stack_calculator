@@ -19,11 +19,11 @@ int main ( int argc, char const *argv[] )
     StackCtor ( &stk_1, 5 );
     //PrintStackElements ( &stk_1 );
 
-    CmdAssmblr ( "examples/discr.txt", "examples/perform_discr.txt" );
+    CmdAssmblr ( "examples/input_test.txt", "examples/perform_test.txt" );
 
     //printf ( "%lld\n", FileByteCount( "examples/perform_discr.txt" ) );
 
-    CmdInterpreter ( "examples/perform_discr.txt", &stk_1, stack_status );
+    //CmdInterpreter ( "examples/perform_discr.txt", &stk_1, stack_status );
 
     //printf ( "%ld", stk_1.data[0] );
     StackDtor( &stk_1 );
