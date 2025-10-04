@@ -5,8 +5,10 @@
 
 #include "error_handler.h"
 #include "stack_creation.h"
+#include "cmd_processor.h"
 #include "calc_comands.h"
 #include "colors.h"
+
 /*-----------------------------------------------------------------------------------------------*/
 
 Stack_Err_t StackPush ( Stack_t* stack, STK_ELM_TYPE value ) {
@@ -45,6 +47,36 @@ Stack_Err_t StackPop ( Stack_t* stack, STK_ELM_TYPE* value ) {
     #ifdef DEBUG
     stack->sum_elm_check -= *value;
     #endif
+
+    return status;
+
+}
+
+/*-----------------------------------------------------------------------------------------------*/
+
+Stack_Err_t RegistrPush ( Stack_t* stack, Cmd_Proc* proc, int reg_num ) {
+
+    Stack_Err_t status = Stack_Err_t::STK_SUCCSESFUL;
+
+    status = StackPush ( stack, proc->reg_buffer[reg_num] );
+    STK_STATUS_CHECK
+
+    return status;
+
+}
+
+/*-----------------------------------------------------------------------------------------------*/
+
+Stack_Err_t RegistrPop ( Stack_t* stack, Cmd_Proc* proc, int reg_num ) {
+
+    Stack_Err_t status = Stack_Err_t::STK_SUCCSESFUL;
+
+    STK_ELM_TYPE element = 0;
+    
+    status = StackPop ( stack, &element );
+    STK_STATUS_CHECK
+
+    proc->reg_buffer[reg_num] = element;
 
     return status;
 

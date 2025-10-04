@@ -9,6 +9,7 @@ typedef enum {
     FILE_OPEN_ERR = 3,
     ERR_IN_STACK_TERMINATION = 4,
     UNDEF_REGISTR_NUM_ERR = 5,
+    MEM_ALLOCATE_ERR = 6,
 
 
 } Proc_Err_t;

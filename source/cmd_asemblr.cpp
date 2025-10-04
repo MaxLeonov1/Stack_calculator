@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include "cmd_asemblr.h"
+#include "support_functions.h"
 #include "error_handler.h"
 
 
@@ -25,6 +26,8 @@ Proc_Err_t CmdAssmblr ( const char* input_file_name, const char* output_file_nam
 
     char* cmd_line = (char*) calloc ( max_cmd_line_size, sizeof(char) );
 
+    long cmd_num = 0;
+
     while ( fgets ( cmd_line, max_cmd_line_size, input_file ) ) {
 
         char comand[max_cmd_size] = {0};
@@ -42,11 +45,15 @@ Proc_Err_t CmdAssmblr ( const char* input_file_name, const char* output_file_nam
 
         fprintf ( output_file, "%d %ld ", cmd_code, arg );
 
+        cmd_num++;
+
     }
 
     free(cmd_line);
     fclose(input_file);
     fclose(output_file);
+
+    IncertAddInfo ( output_file_name, cmd_num );
 
     return status;
 
@@ -79,5 +86,30 @@ Proc_Err_t CmdConvToCode ( int elements, char* command, int* cmd_code ) {
     }
 
     return Proc_Err_t::UNDEF_COMAND_ERR;
+
+}
+
+
+
+Proc_Err_t IncertAddInfo ( const char* filename, long cmd_num ) { //TODO: REALLY SLOWWW/UNEFFICIENT
+
+    long long file_bytes_num = FileByteCount ( filename );
+
+    FILE* stream = fopen ( filename, "r" );
+    if ( stream == nullptr ) return Proc_Err_t::FILE_OPEN_ERR;
+
+    char* file_buffer = (char*) calloc ( (size_t)( file_bytes_num + 5 ) , sizeof(char) );
+    if ( file_buffer == nullptr ) return Proc_Err_t::MEM_ALLOCATE_ERR;
+
+    fread ( file_buffer, sizeof(char), (size_t)( file_bytes_num + 5 ), stream );
+    fclose ( stream );
+
+    FILE* stream_n = fopen ( filename, "w" );
+    if ( stream == nullptr ) return Proc_Err_t::FILE_OPEN_ERR;
+
+    fprintf ( stream_n, "%ld %s", cmd_num, file_buffer );
+    fclose (stream_n);
+
+    free (file_buffer);
 
 }

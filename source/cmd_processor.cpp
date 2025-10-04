@@ -4,6 +4,7 @@
 
 #include "cmd_processor.h"
 #include "support_functions.h"
+#include "stack_creation.h"
 #include "error_handler.h"
 #include "calc_comands.h"
 #include "colors.h"
@@ -50,22 +51,20 @@ Proc_Err_t CmdInterpreter ( const char* input_file_name,
 
 
 
-Proc_Err_t CmdProc ( const char* input_file_name,
-                                 Stack_t* stack, Stack_Err_t stack_status ) {
+Proc_Err_t CmdProcessor ( const char* input_file_name,
+                          Stack_t* stack, Stack_Err_t stack_status ) {
 
     Proc_Err_t status = Proc_Err_t::PRC_SUCCSESFUL;
 
     FILE* input_file = fopen ( input_file_name, "r" );
-    long long file_symb_num = FileByteCount ( input_file_name ); 
+    if ( input_file == nullptr ) return Proc_Err_t::FILE_OPEN_ERR;
 
-    if ( input_file == nullptr )
-        return Proc_Err_t::FILE_OPEN_ERR;
+    long cmd_num = 0;
+    fscanf ( input_file, "%ld", cmd_num );
 
-    char* cmd_line = (char*) calloc ( file_symb_num + 5, sizeof(char) );
+    STK_ELM_TYPE* cmd_line = (STK_ELM_TYPE*) calloc ( cmd_num + 1, sizeof(STK_ELM_TYPE) );
 
-    fread ( cmd_line, sizeof(char), file_symb_num + 5, input_file );
-
-    //цикл с strtok
+    fread ( cmd_line, sizeof(char), cmd_num + 1, input_file );
 
     free(cmd_line);
 
@@ -115,6 +114,16 @@ Stack_Err_t InterpretCmdHandler ( Stack_t* stack, int cmd_code, long argument ) 
         case InterpretCmds::SQRT:
         {
             status = StackSqrt ( stack );
+            return status;
+        }
+        case InterpretCmds::POPR:
+        {
+            
+            return status;
+        }
+        case InterpretCmds::PUSHR:
+        {
+            
             return status;
         }
         case InterpretCmds::OUT:

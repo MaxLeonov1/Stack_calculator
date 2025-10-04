@@ -8,9 +8,9 @@
 
 typedef struct {
 
-    int   cur_com_ind = 0;
-    long* cmd_buffer  = nullptr;
-    int   reg_buf[5]  = {0};
+    int           cur_com_ind = 0;
+    STK_ELM_TYPE* cmd_buffer = nullptr;
+    STK_ELM_TYPE  reg_buffer[5]  = {0};
 
 } Cmd_Proc;
 
@@ -28,15 +28,17 @@ typedef struct {
 
 typedef enum { //just for understanding cmd in handler cases
 
-    PUSH = 1,
-    POP  = 2,
-    SUM  = 3,
-    SUB  = 4,
-    DIV  = 5,
-    MULT = 6,
-    SQRT = 7,
-    OUT  = 8,
-    HLT  = 9,
+    PUSH  = 1,
+    POP   = 2,
+    SUM   = 3,
+    SUB   = 4,
+    DIV   = 5,
+    MULT  = 6,
+    SQRT  = 7,
+    PUSHR = 33,
+    POPR  = 34,
+    OUT   = 8,
+    HLT   = 9,
 
 } InterpretCmds;
 
