@@ -54,11 +54,11 @@ Stack_Err_t StackPop ( Stack_t* stack, STK_ELM_TYPE* value ) {
 
 /*-----------------------------------------------------------------------------------------------*/
 
-Stack_Err_t RegistrPush ( Stack_t* stack, Cmd_Proc* proc, int reg_num ) {
+Stack_Err_t RegistrPush ( Cmd_Proc* proc, int reg_num ) {
 
     Stack_Err_t status = Stack_Err_t::STK_SUCCSESFUL;
 
-    status = StackPush ( stack, proc->reg_buffer[reg_num] );
+    status = StackPush ( &proc->proc_stk, proc->reg_buffer[reg_num] );
     STK_STATUS_CHECK
 
     return status;
@@ -67,16 +67,32 @@ Stack_Err_t RegistrPush ( Stack_t* stack, Cmd_Proc* proc, int reg_num ) {
 
 /*-----------------------------------------------------------------------------------------------*/
 
-Stack_Err_t RegistrPop ( Stack_t* stack, Cmd_Proc* proc, int reg_num ) {
+Stack_Err_t RegistrPop ( Cmd_Proc* proc, int reg_num ) {
 
     Stack_Err_t status = Stack_Err_t::STK_SUCCSESFUL;
 
     STK_ELM_TYPE element = 0;
     
-    status = StackPop ( stack, &element );
+    status = StackPop ( &proc->proc_stk , &element );
     STK_STATUS_CHECK
 
     proc->reg_buffer[reg_num] = element;
+
+    return status;
+
+}
+
+/*-----------------------------------------------------------------------------------------------*/
+
+Stack_Err_t StackIn ( Stack_t* stack ) {
+
+    Stack_Err_t  status = Stack_Err_t::STK_SUCCSESFUL;
+    STK_ELM_TYPE value  = 0;
+
+    printf ( "Inter Push Value: " );
+    scanf  ( "%ld\n", &value );
+
+    status = StackPush ( stack, value );
 
     return status;
 

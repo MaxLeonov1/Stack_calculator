@@ -14,7 +14,8 @@ Stack_Err_t StackMult       ( Stack_t* stack );
 Stack_Err_t StackDiv        ( Stack_t* stack );
 Stack_Err_t StackOut        ( Stack_t* stack );
 Stack_Err_t StackSqrt       ( Stack_t* stack );
-Stack_Err_t RegistrPop      ( Stack_t* stack, Cmd_Proc* proc, int reg_num );
-Stack_Err_t RegistrPush     ( Stack_t* stack, Cmd_Proc* proc, int reg_num );
+Stack_Err_t StackIn         ( Stack_t* stack );
+Stack_Err_t RegistrPop      ( Cmd_Proc* proc, int reg_num );
+Stack_Err_t RegistrPush     ( Cmd_Proc* proc, int reg_num );
 
 #endif

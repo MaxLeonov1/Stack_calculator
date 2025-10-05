@@ -14,59 +14,26 @@ const size_t max_cmd_line_size = 100;
 const size_t max_cmd_size = 20;
 
 
-Proc_Err_t CmdInterpreter ( const char* input_file_name,
-                            Stack_t* stack, Stack_Err_t stack_status ) {
+
+Proc_Err_t CmdProcessor ( const char* input_file_name,  Stack_Err_t stack_status ) {
 
     Proc_Err_t status = Proc_Err_t::PRC_SUCCSESFUL;
+    Stack_Err_t stk_status = Stack_Err_t::STK_SUCCSESFUL;
 
-    FILE* input_file = fopen ( input_file_name, "r" );
+    Cmd_Proc processor = {};
 
-    if ( input_file == nullptr ) 
-        return Proc_Err_t::FILE_OPEN_ERR;
-
-    char* cmd_line = (char*) calloc ( max_cmd_line_size, sizeof(char) );
-
-    while ( fgets ( cmd_line, max_cmd_line_size, input_file ) ) {
-
-        int cmd_code = 0;
-        long argument = 0;
-
-        int elments = sscanf ( cmd_line, "%d %ld", &cmd_code, &argument );
-
-        if ( elments == 0 ) continue;
-
-        stack_status = InterpretCmdHandler ( stack, cmd_code, argument );
-
-        if ( cmd_code == InterpretCmds::HLT ) return status;
-
-    }
-        
-        if ( stack_status != Stack_Err_t::STK_SUCCSESFUL ) return Proc_Err_t::ERR_IN_STACK_TERMINATION;
-
-    free(cmd_line);
-
-    return status;
-    
-}
-
-
-
-Proc_Err_t CmdProcessor ( const char* input_file_name,
-                          Stack_t* stack, Stack_Err_t stack_status ) {
-
-    Proc_Err_t status = Proc_Err_t::PRC_SUCCSESFUL;
+    StackCtor ( &processor.proc_stk, processor.stk_def_size );
 
     FILE* input_file = fopen ( input_file_name, "r" );
     if ( input_file == nullptr ) return Proc_Err_t::FILE_OPEN_ERR;
 
-    long cmd_num = 0;
-    fscanf ( input_file, "%ld", cmd_num );
+    status = ScanCmdToBuffer ( input_file, &processor );
+    PROC_STATUS_CHECK
 
-    STK_ELM_TYPE* cmd_line = (STK_ELM_TYPE*) calloc ( cmd_num + 1, sizeof(STK_ELM_TYPE) );
+    status = ProcessCmds ( &processor, &stk_status );
+    PROC_STATUS_CHECK
 
-    fread ( cmd_line, sizeof(char), cmd_num + 1, input_file );
-
-    free(cmd_line);
+    free(processor.cmd_buffer);
 
     return status;
     
@@ -74,7 +41,30 @@ Proc_Err_t CmdProcessor ( const char* input_file_name,
 
 
 
-Stack_Err_t InterpretCmdHandler ( Stack_t* stack, int cmd_code, long argument ) {
+Proc_Err_t ProcessCmds ( Cmd_Proc* processor, Stack_Err_t* stk_status ) {
+
+    Proc_Err_t status = Proc_Err_t::PRC_SUCCSESFUL;
+
+    while ( processor->cur_com_ind < processor->cmd_num ) {
+
+        int cmd_code = (int)(processor->cmd_buffer[2*processor->cur_com_ind + 1]);
+        STK_ELM_TYPE argument = processor->cmd_buffer[2*processor->cur_com_ind + 2];
+
+        //printf ( "%d %ld\n", cmd_code, argument );
+
+        *stk_status = CmdHandler ( processor, cmd_code, argument );
+
+        processor->cur_com_ind++;
+
+    }
+
+    return status;
+
+}
+
+
+
+Stack_Err_t CmdHandler ( Cmd_Proc* processor , int cmd_code, STK_ELM_TYPE argument ) {
 
     Stack_Err_t status = Stack_Err_t::STK_SUCCSESFUL;
     //printf("%d\n", cmd_code);
@@ -82,53 +72,58 @@ Stack_Err_t InterpretCmdHandler ( Stack_t* stack, int cmd_code, long argument ) 
 
         case InterpretCmds::PUSH:
         {
-            status = StackPush ( stack, argument );
+            status = StackPush ( &processor->proc_stk, argument );
             return status;
         }
         case InterpretCmds::POP: 
         {
             STK_ELM_TYPE value_pop = 0;
-            status = StackPop ( stack, &value_pop );
+            status = StackPop ( &processor->proc_stk, &value_pop );
             return status;
         }
         case InterpretCmds::SUM:
         {
-            status = StackSum ( stack );
+            status = StackSum ( &processor->proc_stk );
             return status;
         } 
         case InterpretCmds::SUB:
         {
-            status = StackSub ( stack );
+            status = StackSub ( &processor->proc_stk );
             return status;
         }
         case InterpretCmds::DIV:
         {
-            status = StackDiv ( stack );
+            status = StackDiv ( &processor->proc_stk );
             return status;
         }
         case InterpretCmds::MULT:
         {
-            status = StackMult ( stack );
+            status = StackMult ( &processor->proc_stk );
             return status;
         }
         case InterpretCmds::SQRT:
         {
-            status = StackSqrt ( stack );
+            status = StackSqrt ( &processor->proc_stk );
             return status;
         }
         case InterpretCmds::POPR:
         {
-            
+            status = RegistrPop ( processor, argument );
             return status;
         }
         case InterpretCmds::PUSHR:
         {
-            
+            status = RegistrPush ( processor, argument );
+            return status;
+        }
+        case InterpretCmds::IN:
+        {
+            status = StackIn ( &processor->proc_stk );
             return status;
         }
         case InterpretCmds::OUT:
         {
-            status = StackOut ( stack );
+            status = StackOut ( &processor->proc_stk );
             return status;
         }
         case InterpretCmds::HLT:
@@ -136,6 +131,42 @@ Stack_Err_t InterpretCmdHandler ( Stack_t* stack, int cmd_code, long argument ) 
             printf( "[END OF PROGRAM]\n" );
             return status;
         }
+        default: 
+        {
+            printf( "[UNKNOWN COMAND]\n" );
+            return status;
+        }
+
+    }
+
+    return status;
+
+}
+
+
+
+Proc_Err_t ScanCmdToBuffer ( FILE* input_file, Cmd_Proc* processor ) {
+
+    Proc_Err_t status = Proc_Err_t::PRC_SUCCSESFUL;
+
+    long cmd_num  = 0;
+
+    fscanf ( input_file, "%ld", &cmd_num );
+
+    processor->cmd_num = cmd_num;
+
+    processor->cmd_buffer = (STK_ELM_TYPE*) calloc ( cmd_num * 2 + 1, sizeof(STK_ELM_TYPE) );
+    if ( processor->cmd_buffer == nullptr ) return Proc_Err_t::MEM_ALLOCATE_ERR;
+
+    for ( long scan_ind = 1; scan_ind < cmd_num * 2 + 1; scan_ind++ ) {
+
+        STK_ELM_TYPE element = 0;
+
+        fscanf ( input_file, "%ld", &element );
+
+        processor->cmd_buffer[scan_ind] = element;
+
+        //printf ( "%ld\n", processor->cmd_buffer[scan_ind] );
 
     }
 

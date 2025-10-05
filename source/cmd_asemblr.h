@@ -26,6 +26,7 @@ static Cmd_Instr Asmblr_Cmd_Instr[] = {
     {.name = "SQRT",  .cmd_code = 7,  .is_arg = 0 },
     {.name = "OUT",   .cmd_code = 8,  .is_arg = 0 },
     {.name = "HLT",   .cmd_code = 9,  .is_arg = 0 },
+    {.name = "IN",    .cmd_code = 10, .is_arg = 0 },
 
 };
 
