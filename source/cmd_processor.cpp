@@ -15,10 +15,9 @@ const size_t max_cmd_size = 20;
 
 
 
-Proc_Err_t CmdProcessor ( const char* input_file_name,  Stack_Err_t stack_status ) {
+Proc_Err_t CmdProcessor ( const char* input_file_name,  Stack_Err_t stk_status ) {
 
     Proc_Err_t status = Proc_Err_t::PRC_SUCCSESFUL;
-    Stack_Err_t stk_status = Stack_Err_t::STK_SUCCSESFUL;
 
     Cmd_Proc processor = {};
 
@@ -53,6 +52,7 @@ Proc_Err_t ProcessCmds ( Cmd_Proc* processor, Stack_Err_t* stk_status ) {
         //printf ( "%d %ld\n", cmd_code, argument );
 
         *stk_status = CmdHandler ( processor, cmd_code, argument );
+        if ( *stk_status != Stack_Err_t::STK_SUCCSESFUL ) return Proc_Err_t::ERR_IN_STACK_TERMINATION;
 
         processor->cur_com_ind++;
 

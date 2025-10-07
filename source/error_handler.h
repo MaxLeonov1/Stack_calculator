@@ -76,12 +76,16 @@ typedef struct {
 .capacity = 0 };                   
 
 
-#endif
+#endif //DEBUG
 
+/*-------------------------------------------------------*/
 
-
-
+void        ProcErrHandler          ( Proc_Err_t proc_status );
 void        PrintStackElements      ( Stack_t* stack );
 const char* DataSpecialParamHandler ( STK_ELM_TYPE param );
+Stack_Err_t StackErrorHandler       ( Stack_t* stack, bool is_dump );
+void        StackDump               ( Stack_t* stack );
+
+/*-------------------------------------------------------*/
 
 #endif

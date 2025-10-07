@@ -39,7 +39,7 @@ typedef enum { //just for understanding cmd in handler cases
 } InterpretCmds;
 
 Stack_Err_t CmdHandler      ( Cmd_Proc* processor , int cmd_code, STK_ELM_TYPE argument );
-Proc_Err_t  CmdProcessor    ( const char* input_file_name, Stack_Err_t stack_status );
+Proc_Err_t  CmdProcessor    ( const char* input_file_name,  Stack_Err_t stk_status );
 Proc_Err_t  ScanCmdToBuffer ( FILE* input_file, Cmd_Proc* processor );
 Proc_Err_t  ProcessCmds     ( Cmd_Proc* processor, Stack_Err_t* stk_status );
 

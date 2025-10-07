@@ -12,19 +12,17 @@
 int main ( int argc, char const *argv[] )
 {
 
-    //x^2 - 5x + 4
+    const char* input_filename = "examples/discr.txt";
+    const char* byte_filename  = "examples/perform_discr.txt";
 
     Stack_Err_t stack_status = Stack_Err_t::STK_SUCCSESFUL;
+    Proc_Err_t  proc_status  = Proc_Err_t::PRC_SUCCSESFUL;
 
-    //PrintStackElements ( &stk_1 );
+    CmdAssmblr ( input_filename, byte_filename );
+    ProcErrHandler ( proc_status );
 
-    CmdAssmblr ( "examples/input_test.txt", "examples/perform_test.txt" );
-
-    CmdProcessor ( "examples/perform_test.txt", stack_status );
-
-    //CmdInterpreter ( "examples/perform_discr.txt", &stk_1, stack_status );
-
-    //printf ( "%ld", stk_1.data[0] );
+    CmdProcessor ( byte_filename, stack_status );
+    ProcErrHandler ( proc_status );
 
     return 0;
 }

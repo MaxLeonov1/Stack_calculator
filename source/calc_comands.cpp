@@ -17,7 +17,8 @@ Stack_Err_t StackPush ( Stack_t* stack, STK_ELM_TYPE value ) {
 
     assert ( stack != nullptr );
 
-    if ( stack->size >= stack->capacity - 2 ) StackAllocation ( stack );
+    if ( stack->size >= stack->capacity - 2 ) status = StackAllocation ( stack );
+    STK_STATUS_CHECK
 
     stack->data[stack->size++] = value;
 
@@ -27,6 +28,7 @@ Stack_Err_t StackPush ( Stack_t* stack, STK_ELM_TYPE value ) {
     stack->sum_elm_check += value;
     #endif
 
+    status = StackErrorHandler ( stack, true );
     return status;
 
 }
@@ -48,6 +50,7 @@ Stack_Err_t StackPop ( Stack_t* stack, STK_ELM_TYPE* value ) {
     stack->sum_elm_check -= *value;
     #endif
 
+    status = StackErrorHandler ( stack, true );
     return status;
 
 }
@@ -60,7 +63,6 @@ Stack_Err_t RegistrPush ( Cmd_Proc* proc, int reg_num ) {
 
     status = StackPush ( &proc->proc_stk, proc->reg_buffer[reg_num] );
     STK_STATUS_CHECK
-
     return status;
 
 }
@@ -90,7 +92,7 @@ Stack_Err_t StackIn ( Stack_t* stack ) {
     STK_ELM_TYPE value  = 0;
 
     printf ( "Inter Push Value: " );
-    scanf  ( "%ld\n", &value );
+    scanf ( "%ld", &value );
 
     status = StackPush ( stack, value );
 
@@ -111,6 +113,8 @@ Stack_Err_t StackAllocation ( Stack_t* stack ) {
     #endif
 
     stack->data = (STK_ELM_TYPE*) realloc ( stack->data, ( realloc_capacity ) * sizeof(STK_ELM_TYPE) );
+    status = StackErrorHandler ( stack, true );
+    STK_STATUS_CHECK
 
     for ( size_t ind = stack->size; ind < realloc_capacity; ind++ ) stack->data[ind] = POISON_NUM;
 
@@ -230,7 +234,7 @@ Stack_Err_t StackSqrt ( Stack_t* stack ) {
     status = StackPop ( stack, &element_1 );
     STK_STATUS_CHECK
 
-    StackPush ( stack, sqrt( element_1 ) );
+    StackPush ( stack, (STK_ELM_TYPE)sqrt( element_1 ) );
     STK_STATUS_CHECK
 
     return status;
