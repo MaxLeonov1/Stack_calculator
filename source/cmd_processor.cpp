@@ -51,7 +51,7 @@ Proc_Err_t ProcessCmds ( Cmd_Proc* processor, Stack_Err_t* stk_status ) {
         processor->cur_com_ind++;
 
         //printf ( "%d\n", processor->cur_com_ind );
-        printf ( "%d %ld\n", cmd_code, argument );
+        //printf ( "%d %ld\n", cmd_code, argument );
 
         *stk_status = CmdHandler ( processor, cmd_code, argument );
         if ( *stk_status != Stack_Err_t::STK_SUCCSESFUL ) return Proc_Err_t::ERR_IN_STACK_TERMINATION;
@@ -145,8 +145,8 @@ Stack_Err_t CmdHandler ( Cmd_Proc* processor , int cmd_code, STK_ELM_TYPE argume
         }
         case InterpretCmds::JB:
         {
-            //printf("aboba");
-            status = JumpIf ( processor, argument );
+            //printf("aboba\n");
+            status = JumpIf ( processor, argument, Cmd_Jump_t::BELOW );
             return status;
         }
         default: 

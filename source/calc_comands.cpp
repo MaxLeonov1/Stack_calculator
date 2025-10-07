@@ -264,7 +264,7 @@ Stack_Err_t PauseProc ( void ) {
 
 /*-----------------------------------------------------------------------------------------------*/
 
-Stack_Err_t JumpIf ( Cmd_Proc* processor, STK_ELM_TYPE cmd_ind ) {
+Stack_Err_t JumpIf ( Cmd_Proc* processor, STK_ELM_TYPE cmd_ind, Cmd_Jump_t type ) {
 
     Stack_Err_t status = Stack_Err_t::STK_SUCCSESFUL;
 
@@ -276,8 +276,36 @@ Stack_Err_t JumpIf ( Cmd_Proc* processor, STK_ELM_TYPE cmd_ind ) {
     status = StackPop ( &processor->proc_stk, &element_1 );
     STK_STATUS_CHECK
 
-    if ( element_1 < element_2 ) status = JumpToCmd ( processor, cmd_ind );
+    switch ( type ){
+
+        case Cmd_Jump_t::BELOW:
+            #define comparator <
+            break;
+        case Cmd_Jump_t::BELOW_AND_EQUAL:
+            #define comparator <=
+            break;
+        case Cmd_Jump_t::EQUAL:
+            #define comparator ==
+            break;
+        case Cmd_Jump_t::NOT_EQUAL:
+            #define comparator !=
+            break;
+        case Cmd_Jump_t::GREATER:
+            #define comparator >
+            break;
+        case Cmd_Jump_t::GREATER_AND_EQUAL:
+            #define comparator >=
+            break;
+        // default:
+        //     #define comparator <
+        //     break;
+
+    }
+
+    if ( element_1 comparator element_2 ) status = JumpToCmd ( processor, cmd_ind );
     STK_STATUS_CHECK
+
+    #undef comparator
 
     return status;
 
