@@ -264,7 +264,7 @@ Stack_Err_t PauseProc ( void ) {
 
 /*-----------------------------------------------------------------------------------------------*/
 
-Stack_Err_t JumpIfBelow ( Cmd_Proc* processor, STK_ELM_TYPE cmd_ind ) {
+Stack_Err_t JumpIf ( Cmd_Proc* processor, STK_ELM_TYPE cmd_ind ) {
 
     Stack_Err_t status = Stack_Err_t::STK_SUCCSESFUL;
 

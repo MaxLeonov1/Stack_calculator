@@ -5,6 +5,14 @@
 #include "stack_creation.h"
 #include "error_handler.h"
 
+
+typedef enum {
+
+
+
+} CmdJumpType;
+
+
 Stack_Err_t StackPush       ( Stack_t* stack, STK_ELM_TYPE value );
 Stack_Err_t StackPop        ( Stack_t* stack, STK_ELM_TYPE* value );
 Stack_Err_t StackAllocation ( Stack_t* stack );
@@ -19,6 +27,6 @@ Stack_Err_t RegistrPop      ( Cmd_Proc* proc, int reg_num );
 Stack_Err_t RegistrPush     ( Cmd_Proc* proc, int reg_num );
 Stack_Err_t PauseProc       ( void );
 Stack_Err_t JumpToCmd       ( Cmd_Proc* processor, STK_ELM_TYPE cmd_ind );
-Stack_Err_t JumpIfBelow     ( Cmd_Proc* processor, STK_ELM_TYPE cmd_ind );
+Stack_Err_t JumpIf          ( Cmd_Proc* processor, STK_ELM_TYPE cmd_ind );
 
 #endif
