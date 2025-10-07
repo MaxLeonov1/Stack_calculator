@@ -12,8 +12,8 @@
 int main ( int argc, char const *argv[] )
 {
 
-    const char* input_filename = "examples/discr.txt";
-    const char* byte_filename  = "examples/perform_discr.txt";
+    const char* input_filename = "examples/input_test.txt";
+    const char* byte_filename  = "examples/perform_test.txt";
 
     Stack_Err_t stack_status = Stack_Err_t::STK_SUCCSESFUL;
     Proc_Err_t  proc_status  = Proc_Err_t::PRC_SUCCSESFUL;

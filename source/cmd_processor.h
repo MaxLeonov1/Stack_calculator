@@ -35,6 +35,9 @@ typedef enum { //just for understanding cmd in handler cases
     OUT   = 8,
     HLT   = 9,
     IN    = 10,
+    PAUSE = 11,
+    JMP   = 12,
+    JB    = 13,
 
 } InterpretCmds;
 

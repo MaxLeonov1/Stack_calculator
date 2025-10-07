@@ -48,13 +48,13 @@ Proc_Err_t ProcessCmds ( Cmd_Proc* processor, Stack_Err_t* stk_status ) {
 
         int cmd_code = (int)(processor->cmd_buffer[2*processor->cur_com_ind + 1]);
         STK_ELM_TYPE argument = processor->cmd_buffer[2*processor->cur_com_ind + 2];
+        processor->cur_com_ind++;
 
+        //printf ( "%d\n", processor->cur_com_ind );
         //printf ( "%d %ld\n", cmd_code, argument );
 
         *stk_status = CmdHandler ( processor, cmd_code, argument );
         if ( *stk_status != Stack_Err_t::STK_SUCCSESFUL ) return Proc_Err_t::ERR_IN_STACK_TERMINATION;
-
-        processor->cur_com_ind++;
 
     }
 
@@ -124,11 +124,28 @@ Stack_Err_t CmdHandler ( Cmd_Proc* processor , int cmd_code, STK_ELM_TYPE argume
         case InterpretCmds::OUT:
         {
             status = StackOut ( &processor->proc_stk );
+            //PrintStackElements(&processor->proc_stk);
             return status;
         }
         case InterpretCmds::HLT:
         {
             printf( "[END OF PROGRAM]\n" );
+            return status;
+        }
+        case InterpretCmds::PAUSE:
+        {
+            //printf("aboba\n");
+            PauseProc();
+            return status;
+        }
+        case InterpretCmds::JMP:
+        {
+            status = JumpToCmd ( processor, argument );
+            return status;
+        }
+        case InterpretCmds::JB:
+        {
+            status = JumpIfBelow ( processor, argument );
             return status;
         }
         default: 

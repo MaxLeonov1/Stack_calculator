@@ -41,6 +41,7 @@ Proc_Err_t CmdAssmblr ( const char* input_file_name, const char* output_file_nam
         if ( elements == 0 ) continue;
 
         status = CmdConvToCode ( elements, comand, &cmd_code );
+        //printf ("%d\n", cmd_code);
         PROC_STATUS_CHECK
 
         fprintf ( output_file, "%d %ld ", cmd_code, arg );

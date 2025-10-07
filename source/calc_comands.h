@@ -17,5 +17,8 @@ Stack_Err_t StackSqrt       ( Stack_t* stack );
 Stack_Err_t StackIn         ( Stack_t* stack );
 Stack_Err_t RegistrPop      ( Cmd_Proc* proc, int reg_num );
 Stack_Err_t RegistrPush     ( Cmd_Proc* proc, int reg_num );
+Stack_Err_t PauseProc       ( void );
+Stack_Err_t JumpToCmd       ( Cmd_Proc* processor, STK_ELM_TYPE cmd_ind );
+Stack_Err_t JumpIfBelow     ( Cmd_Proc* processor, STK_ELM_TYPE cmd_ind );
 
 #endif

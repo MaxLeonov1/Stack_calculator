@@ -183,6 +183,8 @@ Stack_Err_t StackMult ( Stack_t* stack ) {
     status = StackPop ( stack, &element_1 );
     STK_STATUS_CHECK
 
+    //printf("%ld %ld\n", element_1, element_2);
+
     StackPush ( stack, element_1 * element_2 );
     STK_STATUS_CHECK
 
@@ -238,4 +240,45 @@ Stack_Err_t StackSqrt ( Stack_t* stack ) {
     STK_STATUS_CHECK
 
     return status;
+}
+
+/*-----------------------------------------------------------------------------------------------*/
+
+Stack_Err_t JumpToCmd ( Cmd_Proc* processor, STK_ELM_TYPE cmd_ind ) {
+
+    Stack_Err_t status = Stack_Err_t::STK_SUCCSESFUL;
+
+    processor->cur_com_ind = cmd_ind;
+
+    return status;
+
+}
+
+/*-----------------------------------------------------------------------------------------------*/
+
+Stack_Err_t PauseProc ( void ) {
+
+    getchar();
+
+}
+
+/*-----------------------------------------------------------------------------------------------*/
+
+Stack_Err_t JumpIfBelow ( Cmd_Proc* processor, STK_ELM_TYPE cmd_ind ) {
+
+    Stack_Err_t status = Stack_Err_t::STK_SUCCSESFUL;
+
+    STK_ELM_TYPE element_1 = 0;
+    STK_ELM_TYPE element_2 = 0;
+
+    status = StackPop ( &processor->proc_stk, &element_2 );
+    STK_STATUS_CHECK
+    status = StackPop ( &processor->proc_stk, &element_1 );
+    STK_STATUS_CHECK
+
+    if ( element_1 < element_2 ) status = JumpToCmd ( processor, cmd_ind );
+    STK_STATUS_CHECK
+
+    return status;
+
 }
