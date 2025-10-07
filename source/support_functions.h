@@ -3,6 +3,7 @@
 
 
 long long FileByteCount ( const char* filename );
+int       FileLineCount ( const char* filename );
 
 
 #endif 

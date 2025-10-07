@@ -35,9 +35,10 @@ static Cmd_Instr Asmblr_Cmd_Instr[] = {
 
 /*-------------------------------------------------------*/
 
-Proc_Err_t CmdAssmblr    ( const char* input_file_name, const char* output_file_name );
-Proc_Err_t CmdConvToCode ( int elements, char* command, int* cmd_code );
-Proc_Err_t IncertAddInfo ( const char* filename, long cmd_num );
+Proc_Err_t CmdAssmblr      ( const char* input_file_name, const char* output_file_name );
+Proc_Err_t CmdConvToCode   ( int elements, char* command, int* cmd_code );
+Proc_Err_t AsmblrScanFile  ( STK_ELM_TYPE* cmd_buffer, FILE* stream );
+Proc_Err_t AsmblrPrintFile ( STK_ELM_TYPE* cmd_buffer, FILE* stream, long cmd_num );
 
 
 

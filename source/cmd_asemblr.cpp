@@ -12,6 +12,7 @@ const size_t max_cmd_line_size = 100;
 const size_t max_cmd_size = 20;
 
 const int proc_reg_num = 5;
+const int spec_param_num = 1;
 
 
 Proc_Err_t CmdAssmblr ( const char* input_file_name, const char* output_file_name ) {
@@ -24,11 +25,36 @@ Proc_Err_t CmdAssmblr ( const char* input_file_name, const char* output_file_nam
     if ( input_file == nullptr || output_file == nullptr ) 
         return Proc_Err_t::FILE_OPEN_ERR;
 
+    long cmd_num = FileLineCount(input_file_name);
+    if ( cmd_num == 0 ) return Proc_Err_t::FILE_OPEN_ERR;
+
+    STK_ELM_TYPE* cmd_buffer = (STK_ELM_TYPE*) calloc ( 2*cmd_num + 5, sizeof(STK_ELM_TYPE) );
+
+    cmd_buffer[0] = cmd_num;
+
+    status = AsmblrScanFile ( cmd_buffer, input_file );
+
+    status = AsmblrPrintFile ( cmd_buffer, output_file, cmd_num );
+
+    free(cmd_buffer);
+    fclose(input_file);
+    fclose(output_file);
+
+    return status;
+
+} 
+
+
+
+Proc_Err_t AsmblrScanFile ( STK_ELM_TYPE* cmd_buffer, FILE* stream ) {
+
+    Proc_Err_t status = Proc_Err_t::PRC_SUCCSESFUL;
+
     char* cmd_line = (char*) calloc ( max_cmd_line_size, sizeof(char) );
 
-    long cmd_num = 0;
+    int ind = spec_param_num;
 
-    while ( fgets ( cmd_line, max_cmd_line_size, input_file ) ) {
+    while ( fgets ( cmd_line, max_cmd_line_size, stream ) ) {
 
         char comand[max_cmd_size] = {0};
 
@@ -41,24 +67,35 @@ Proc_Err_t CmdAssmblr ( const char* input_file_name, const char* output_file_nam
         if ( elements == 0 ) continue;
 
         status = CmdConvToCode ( elements, comand, &cmd_code );
-        //printf ("%d\n", cmd_code);
         PROC_STATUS_CHECK
 
-        fprintf ( output_file, "%d %ld ", cmd_code, arg );
+        cmd_buffer[ind]     = cmd_code;
+        cmd_buffer[ind + 1] = arg;
 
-        cmd_num++;
+        //printf("%ld %ld\n", cmd_buffer[ind], cmd_buffer[ind + 1] );
+
+        ind += 2;
 
     }
 
     free(cmd_line);
-    fclose(input_file);
-    fclose(output_file);
 
-    IncertAddInfo ( output_file_name, cmd_num );
+}
 
-    return status;
 
-} 
+
+Proc_Err_t AsmblrPrintFile ( STK_ELM_TYPE* cmd_buffer, FILE* stream, long cmd_num ) {
+
+    int ind = 0;
+
+    while ( ind < 2*cmd_num + spec_param_num ) {
+
+        fprintf ( stream, "%ld ", cmd_buffer[ind] );
+        ind++;
+
+    }
+
+}
 
 
 
@@ -88,29 +125,4 @@ Proc_Err_t CmdConvToCode ( int elements, char* command, int* cmd_code ) {
 
     return Proc_Err_t::UNDEF_COMAND_ERR;
 
-}
-
-
-
-Proc_Err_t IncertAddInfo ( const char* filename, long cmd_num ) { //TODO: REALLY SLOWWW/UNEFFICIENT
-
-    long long file_bytes_num = FileByteCount ( filename );
-
-    FILE* stream = fopen ( filename, "r" );
-    if ( stream == nullptr ) return Proc_Err_t::FILE_OPEN_ERR;
-
-    char* file_buffer = (char*) calloc ( (size_t)( file_bytes_num + 5 ) , sizeof(char) );
-    if ( file_buffer == nullptr ) return Proc_Err_t::MEM_ALLOCATE_ERR;
-
-    fread ( file_buffer, sizeof(char), (size_t)( file_bytes_num + 5 ), stream );
-    fclose ( stream );
-
-    FILE* stream_n = fopen ( filename, "w" );
-    if ( stream == nullptr ) return Proc_Err_t::FILE_OPEN_ERR;
-
-    fprintf ( stream_n, "%ld %s", cmd_num, file_buffer );
-    fclose (stream_n);
-
-    free (file_buffer);
-
-}
+} 
