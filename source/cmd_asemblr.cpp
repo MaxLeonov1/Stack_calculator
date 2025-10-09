@@ -88,7 +88,7 @@ Proc_Err_t AsmblrPrintFile ( STK_ELM_TYPE* cmd_buffer, FILE* stream, long cmd_nu
 
     int ind = 0;
 
-    while ( ind < 2*cmd_num + spec_param_num ) {
+    while ( ind < 2*( cmd_num - 1 ) + spec_param_num ) {
 
         fprintf ( stream, "%ld ", cmd_buffer[ind] );
         ind++;

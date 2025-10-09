@@ -38,6 +38,11 @@ typedef enum { //just for understanding cmd in handler cases
     PAUSE = 11,
     JMP   = 12,
     JB    = 13,
+    JBE   = 14,
+    JA    = 15,
+    JAE   = 16,
+    JE    = 17,
+    JNE   = 18,
 
 } InterpretCmds;
 

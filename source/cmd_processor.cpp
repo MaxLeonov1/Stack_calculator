@@ -145,8 +145,32 @@ Stack_Err_t CmdHandler ( Cmd_Proc* processor , int cmd_code, STK_ELM_TYPE argume
         }
         case InterpretCmds::JB:
         {
-            //printf("aboba\n");
             status = JumpIf ( processor, argument, Cmd_Jump_t::BELOW );
+            return status;
+        }
+        case InterpretCmds::JBE:
+        {
+            status = JumpIf ( processor, argument, Cmd_Jump_t::BELOW_AND_EQUAL );
+            return status;
+        }
+        case InterpretCmds::JE:
+        {
+            status = JumpIf ( processor, argument, Cmd_Jump_t::EQUAL );
+            return status;
+        }
+        case InterpretCmds::JNE:
+        {
+            status = JumpIf ( processor, argument, Cmd_Jump_t::NOT_EQUAL );
+            return status;
+        }
+        case InterpretCmds::JA:
+        {
+            status = JumpIf ( processor, argument, Cmd_Jump_t::GREATER );
+            return status;
+        }
+        case InterpretCmds::JAE:
+        {
+            status = JumpIf ( processor, argument, Cmd_Jump_t::GREATER_AND_EQUAL );
             return status;
         }
         default: 

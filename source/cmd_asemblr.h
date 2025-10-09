@@ -30,6 +30,11 @@ static Cmd_Instr Asmblr_Cmd_Instr[] = {
     {.name = "PAUSE", .cmd_code = 11, .is_arg = 0 },
     {.name = "JMP",   .cmd_code = 12, .is_arg = 1 },
     {.name = "JB",    .cmd_code = 13, .is_arg = 1 },
+    {.name = "JBE",   .cmd_code = 14, .is_arg = 1 },
+    {.name = "JA",    .cmd_code = 15, .is_arg = 1 },
+    {.name = "JAE",   .cmd_code = 16, .is_arg = 1 },
+    {.name = "JE" ,   .cmd_code = 17, .is_arg = 1 },
+    {.name = "JNE",   .cmd_code = 18, .is_arg = 1 },
 
 };
 
