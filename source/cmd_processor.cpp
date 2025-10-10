@@ -182,9 +182,14 @@ Stack_Err_t CmdHandler ( Cmd_Proc* processor , int cmd_code, STK_ELM_TYPE argume
             printf("===================\n");
             return status;
         }
+        case InterpretCmds::NULL_CMD:
+        {
+            printf ( "%s[NULL COMMAND]%s\n", YELLOW, RES_COL );
+            return status;
+        }
         default: 
         {
-            printf( "%s[UNKNOWN COMAND]%s\n", RED, RES_COL);
+            printf( "%s[UNKNOWN COMMAND]%s\n", RED, RES_COL );
             return status;
         }
 

@@ -11,6 +11,7 @@ typedef enum {
     UNDEF_REGISTR_NUM_ERR = 5,
     MEM_ALLOCATE_ERR = 6,
     UNDEF_ARG_ERR = 7,
+    INCOR_ARG_ERR = 8,
 
 } Proc_Err_t;
 

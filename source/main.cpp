@@ -23,12 +23,8 @@ int main ( int argc, char const *argv[] )
     proc_status = CmdAssmblr ( input_filename, byte_filename, &ass_1 );
     ProcErrHandler ( proc_status );
 
-    // printf( "label_value %d\n", ass_1.labels[1]);
-
     proc_status = CmdAssmblr ( input_filename, byte_filename, &ass_1 );
     ProcErrHandler ( proc_status );
-
-    // printf( "label_value %d\n", ass_1.labels[1]);
 
     proc_status = CmdProcessor ( byte_filename, stack_status );
     ProcErrHandler ( proc_status );

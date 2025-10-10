@@ -7,19 +7,25 @@
 
 typedef struct {
 
+    int labels[10];
+
+    /*PROC_INFO*/
+
+    int proc_reg_num;
+
+} Cmd_Assemblr_t;
+
+#define ASSMBLR( name ) Cmd_Assemblr_t name = { .labels = {-1}, .proc_reg_num = 10 };
+
+/*-------------------------------------------------------*/
+
+typedef struct {
+
     const char* name;
     const int cmd_code;
     const int is_arg;
 
 } Cmd_Instr;
-
-typedef struct {
-
-    int labels[10];
-
-} Cmd_Assemblr_t;
-
-#define ASSMBLR( name ) Cmd_Assemblr_t name = { .labels = {-1} };
 
 static Cmd_Instr Asmblr_Cmd_Instr[] = {
 
@@ -47,16 +53,19 @@ static Cmd_Instr Asmblr_Cmd_Instr[] = {
 
 };
 
-/*-------------------------------------------------------*/
+/*-------------------------------------------------------------------------------------------------------------------*/
 
 Proc_Err_t CmdAssmblr      ( const char* input_file_name, const char* output_file_name, Cmd_Assemblr_t* assmblr );
-Proc_Err_t CmdConvToCode   ( int elements, char* command, int* cmd_code );
+Proc_Err_t CmdConvToCode   ( int elements, char* command, int* cmd_code, char* arg );
 Proc_Err_t ArgConvToCode   ( Cmd_Assemblr_t* assmblr, int elements, char* arg, long* arg_code );
 Proc_Err_t AsmblrScanFile  ( Cmd_Assemblr_t* assmblr, STK_ELM_TYPE* cmd_buffer, FILE* stream, long* cmd_num );
 Proc_Err_t AsmblrPrintFile ( STK_ELM_TYPE* cmd_buffer, FILE* stream, long cmd_num );
 
-int IsLabel ( const char* arg );
+/*-------------------------------------------------------------------------------------------------------------------*/
 
+int IsLabel                ( const char* arg );
+int RegisterCmdCodeHandler ( char* arg, int cmd_code );
 
+/*-------------------------------------------------------------------------------------------------------------------*/
 
 #endif
