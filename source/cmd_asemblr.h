@@ -7,7 +7,10 @@
 
 typedef struct {
 
+    STK_ELM_TYPE* cmd_buffer;
+
     int labels[10];
+    int spec_param_num;
 
     /*PROC_INFO*/
 
@@ -15,7 +18,11 @@ typedef struct {
 
 } Cmd_Assemblr_t;
 
-#define ASSMBLR( name ) Cmd_Assemblr_t name = { .labels = {-1}, .proc_reg_num = 10 };
+#define ASSMBLR( name ) Cmd_Assemblr_t name = { \
+.cmd_buffer = nullptr, \
+.labels = {-1}, \
+.spec_param_num = 1, \
+.proc_reg_num = 10, };
 
 /*-------------------------------------------------------*/
 
@@ -58,8 +65,8 @@ static Cmd_Instr Asmblr_Cmd_Instr[] = {
 Proc_Err_t CmdAssmblr      ( const char* input_file_name, const char* output_file_name, Cmd_Assemblr_t* assmblr );
 Proc_Err_t CmdConvToCode   ( int elements, char* command, int* cmd_code, char* arg );
 Proc_Err_t ArgConvToCode   ( Cmd_Assemblr_t* assmblr, int elements, char* arg, long* arg_code );
-Proc_Err_t AsmblrScanFile  ( Cmd_Assemblr_t* assmblr, STK_ELM_TYPE* cmd_buffer, FILE* stream, long* cmd_num );
-Proc_Err_t AsmblrPrintFile ( STK_ELM_TYPE* cmd_buffer, FILE* stream, long cmd_num );
+Proc_Err_t AsmblrScanFile  ( Cmd_Assemblr_t* assmblr, FILE* stream, long* cmd_num );
+Proc_Err_t AsmblrPrintFile ( Cmd_Assemblr_t* assmblr, FILE* stream, long cmd_num );
 
 /*-------------------------------------------------------------------------------------------------------------------*/
 

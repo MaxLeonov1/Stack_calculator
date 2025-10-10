@@ -11,9 +11,6 @@
 const size_t max_cmd_line_size = 100;
 const size_t max_cmd_size = 20;
 
-const int proc_reg_num = 5;
-const int spec_param_num = 1;
-
 /*-----------------------------------------------------------------------------------------------*/
 
 Proc_Err_t CmdAssmblr ( const char* input_file_name, const char* output_file_name, Cmd_Assemblr_t* assmblr ) {
@@ -29,15 +26,15 @@ Proc_Err_t CmdAssmblr ( const char* input_file_name, const char* output_file_nam
     long cmd_num = FileLineCount(input_file_name);
     if ( cmd_num == 0 ) return Proc_Err_t::FILE_OPEN_ERR;
 
-    STK_ELM_TYPE* cmd_buffer = (STK_ELM_TYPE*) calloc ( 2*cmd_num + 5, sizeof(STK_ELM_TYPE) );
+    assmblr->cmd_buffer = (STK_ELM_TYPE*) calloc ( 2*cmd_num + 5, sizeof(STK_ELM_TYPE) );
 
-    status = AsmblrScanFile ( assmblr, cmd_buffer, input_file, &cmd_num );
+    status = AsmblrScanFile ( assmblr, input_file, &cmd_num );
 
-    cmd_buffer[0] = cmd_num;
+    assmblr->cmd_buffer[0] = cmd_num;
 
-    status = AsmblrPrintFile ( cmd_buffer, output_file, cmd_num );
+    status = AsmblrPrintFile ( assmblr, output_file, cmd_num );
 
-    free(cmd_buffer);
+    free(assmblr->cmd_buffer);
     fclose(input_file);
     fclose(output_file);
 
@@ -47,13 +44,13 @@ Proc_Err_t CmdAssmblr ( const char* input_file_name, const char* output_file_nam
 
 /*-----------------------------------------------------------------------------------------------*/
 
-Proc_Err_t AsmblrScanFile ( Cmd_Assemblr_t* assmblr, STK_ELM_TYPE* cmd_buffer, FILE* stream, long* cmd_num ) {
+Proc_Err_t AsmblrScanFile ( Cmd_Assemblr_t* assmblr, FILE* stream, long* cmd_num ) {
 
     Proc_Err_t status = Proc_Err_t::PRC_SUCCSESFUL;
 
     char* cmd_line = (char*) calloc ( max_cmd_line_size, sizeof(char) );
 
-    int cmd_ind = spec_param_num;
+    int cmd_ind = assmblr->spec_param_num;
 
     while ( fgets ( cmd_line, max_cmd_line_size, stream ) ) {
 
@@ -74,7 +71,7 @@ Proc_Err_t AsmblrScanFile ( Cmd_Assemblr_t* assmblr, STK_ELM_TYPE* cmd_buffer, F
         if ( IsLabel(cmd) ) {
 
             int label_ind = atoi ( (const char*)( cmd + sizeof(char) ) );
-            assmblr->labels[label_ind] = (cmd_ind - spec_param_num)/2;
+            assmblr->labels[label_ind] = (cmd_ind - assmblr->spec_param_num)/2;
 
             (*cmd_num)--;
             continue;
@@ -86,8 +83,8 @@ Proc_Err_t AsmblrScanFile ( Cmd_Assemblr_t* assmblr, STK_ELM_TYPE* cmd_buffer, F
         status = ArgConvToCode ( assmblr, elements, arg, &arg_code );
         PROC_STATUS_CHECK
 
-        cmd_buffer[cmd_ind]     = cmd_code;
-        cmd_buffer[cmd_ind + 1] = arg_code;
+        assmblr->cmd_buffer[cmd_ind] = cmd_code;
+        assmblr->cmd_buffer[cmd_ind + 1] = arg_code;
 
         cmd_ind += 2;
 
@@ -99,13 +96,13 @@ Proc_Err_t AsmblrScanFile ( Cmd_Assemblr_t* assmblr, STK_ELM_TYPE* cmd_buffer, F
 
 /*-----------------------------------------------------------------------------------------------*/
 
-Proc_Err_t AsmblrPrintFile ( STK_ELM_TYPE* cmd_buffer, FILE* stream, long cmd_num ) {
+Proc_Err_t AsmblrPrintFile ( Cmd_Assemblr_t* assmblr, FILE* stream, long cmd_num ) {
 
     int ind = 0;
 
-    while ( ind < 2*( cmd_num ) + spec_param_num ) {
+    while ( ind < 2*( cmd_num ) + assmblr->spec_param_num ) {
 
-        fprintf ( stream, "%ld ", cmd_buffer[ind] );
+        fprintf ( stream, "%ld ", assmblr->cmd_buffer[ind] );
         ind++;
 
     }
@@ -218,3 +215,22 @@ int RegisterCmdCodeHandler ( char* arg, int cmd_code ) {
 }
 
 /*-----------------------------------------------------------------------------------------------*/
+
+// Proc_Err_t NonCmdCasesCheck ( int elements, long* cmd_num ) {
+
+//     if ( elements == -1 ) {
+//         (*cmd_num)--;
+//         continue;
+//     }
+
+//     if ( IsLabel(cmd) ) {
+
+//         int label_ind = atoi ( (const char*)( cmd + sizeof(char) ) );
+//         assmblr->labels[label_ind] = (cmd_ind - assmblr->spec_param_num)/2;
+
+//         (*cmd_num)--;
+//         continue;
+
+//     }
+
+// }
