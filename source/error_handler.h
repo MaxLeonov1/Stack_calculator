@@ -10,7 +10,7 @@ typedef enum {
     ERR_IN_STACK_TERMINATION = 4,
     UNDEF_REGISTR_NUM_ERR = 5,
     MEM_ALLOCATE_ERR = 6,
-
+    UNDEF_ARG_ERR = 7,
 
 } Proc_Err_t;
 

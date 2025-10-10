@@ -15,7 +15,7 @@ typedef struct {
     long cmd_num = 0;
 
     STK_ELM_TYPE* cmd_buffer = nullptr;
-    STK_ELM_TYPE  reg_buffer[5]  = {0};
+    STK_ELM_TYPE  reg_buffer[10]  = {0};
 
 } Cmd_Proc;
 
@@ -43,6 +43,7 @@ typedef enum { //just for understanding cmd in handler cases
     JAE   = 16,
     JE    = 17,
     JNE   = 18,
+    PRTS  = 19,
 
 } InterpretCmds;
 

@@ -63,6 +63,7 @@ Stack_Err_t RegistrPush ( Cmd_Proc* proc, int reg_num ) {
 
     status = StackPush ( &proc->proc_stk, proc->reg_buffer[reg_num] );
     STK_STATUS_CHECK
+
     return status;
 
 }
@@ -205,7 +206,9 @@ Stack_Err_t StackDiv ( Stack_t* stack ) {
     status = StackPop ( stack, &element_1 );
     STK_STATUS_CHECK
 
-    StackPush ( stack, element_1 / element_2 );
+    //printf ("elem %ld\n", element_2 / element_1);
+
+    StackPush ( stack, element_2 / element_1 );
     STK_STATUS_CHECK
 
     return status;
@@ -235,6 +238,8 @@ Stack_Err_t StackSqrt ( Stack_t* stack ) {
 
     status = StackPop ( stack, &element_1 );
     STK_STATUS_CHECK
+
+    //printf ("elem %ld\n", (STK_ELM_TYPE)sqrt(element_1));
 
     StackPush ( stack, (STK_ELM_TYPE)sqrt( element_1 ) );
     STK_STATUS_CHECK

@@ -12,14 +12,23 @@
 int main ( int argc, char const *argv[] )
 {
 
-    const char* input_filename = "examples/input_test.txt";
-    const char* byte_filename  = "examples/perform_test.txt";
+    const char* input_filename = "examples/input.txt";
+    const char* byte_filename  = "examples/perform.txt";
 
     Stack_Err_t stack_status = Stack_Err_t::STK_SUCCSESFUL;
     Proc_Err_t  proc_status  = Proc_Err_t::PRC_SUCCSESFUL;
 
-    proc_status = CmdAssmblr ( input_filename, byte_filename );
+    ASSMBLR( ass_1 )
+
+    proc_status = CmdAssmblr ( input_filename, byte_filename, &ass_1 );
     ProcErrHandler ( proc_status );
+
+    // printf( "label_value %d\n", ass_1.labels[1]);
+
+    proc_status = CmdAssmblr ( input_filename, byte_filename, &ass_1 );
+    ProcErrHandler ( proc_status );
+
+    // printf( "label_value %d\n", ass_1.labels[1]);
 
     proc_status = CmdProcessor ( byte_filename, stack_status );
     ProcErrHandler ( proc_status );

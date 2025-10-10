@@ -56,6 +56,8 @@ Proc_Err_t ProcessCmds ( Cmd_Proc* processor, Stack_Err_t* stk_status ) {
         *stk_status = CmdHandler ( processor, cmd_code, argument );
         if ( *stk_status != Stack_Err_t::STK_SUCCSESFUL ) return Proc_Err_t::ERR_IN_STACK_TERMINATION;
 
+        if ( cmd_code == InterpretCmds::HLT ) return status;
+
     }
 
     return status;
@@ -129,7 +131,7 @@ Stack_Err_t CmdHandler ( Cmd_Proc* processor , int cmd_code, STK_ELM_TYPE argume
         }
         case InterpretCmds::HLT:
         {
-            printf( "[END OF PROGRAM]\n" );
+            printf( "%s[END OF PROGRAM]%s\n", GREEN, RES_COL );
             return status;
         }
         case InterpretCmds::PAUSE:
@@ -173,9 +175,16 @@ Stack_Err_t CmdHandler ( Cmd_Proc* processor , int cmd_code, STK_ELM_TYPE argume
             status = JumpIf ( processor, argument, Cmd_Jump_t::GREATER_AND_EQUAL );
             return status;
         }
+        case InterpretCmds::PRTS:
+        {
+            printf("==PROCESSOR_STACK==\n");
+            PrintStackElements(&processor->proc_stk);
+            printf("===================\n");
+            return status;
+        }
         default: 
         {
-            printf( "[UNKNOWN COMAND]\n" );
+            printf( "%s[UNKNOWN COMAND]%s\n", RED, RES_COL);
             return status;
         }
 
