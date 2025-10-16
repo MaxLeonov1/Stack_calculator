@@ -43,8 +43,10 @@ Stack_Err_t StackPop ( Stack_t* stack, STK_ELM_TYPE* value ) {
 
     *value = stack->data[stack->size - 1];
 
+    //printf("=============%ld===========\n", stack->size);
+
     stack->data[stack->size - 1] = POISON_NUM;
-    stack->size--; 
+    stack->size--;
 
     #ifdef DEBUG
     stack->sum_elm_check -= *value;
@@ -316,12 +318,14 @@ Stack_Err_t JumpIf ( Cmd_Proc* processor, STK_ELM_TYPE cmd_ind, Cmd_Jump_t type 
 
 /*-----------------------------------------------------------------------------------------------*/
 
-Stack_Err_t Call ( Cmd_Proc* processor, STK_ELM_TYPE jmp_ind ) {
+Stack_Err_t CallCmd ( Cmd_Proc* processor, STK_ELM_TYPE jmp_ind ) {
 
     Stack_Err_t status = Stack_Err_t::STK_SUCCSESFUL;
 
     status = StackPush ( &processor->call_stk, processor->cur_com_ind );
     STK_STATUS_CHECK
+
+    //StackDump ( &processor->call_stk );
 
     status = JumpToCmd ( processor, jmp_ind );
     STK_STATUS_CHECK
@@ -339,6 +343,8 @@ Stack_Err_t ReturnToCall ( Cmd_Proc* processor ) {
     STK_ELM_TYPE jmp_ind = 0;
     status = StackPop ( &processor->proc_stk, &jmp_ind );
     STK_STATUS_CHECK
+
+    //StackDump ( &processor->call_stk ); 
 
     status = JumpToCmd ( processor, jmp_ind );
     STK_STATUS_CHECK

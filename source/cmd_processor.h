@@ -32,8 +32,6 @@ typedef enum { //just for understanding cmd in handler cases
     DIV   = 5,
     MULT  = 6,
     SQRT  = 7,
-    PUSHR = 33,
-    POPR  = 34,
     OUT   = 8,
     HLT   = 9,
     IN    = 10,
@@ -46,6 +44,10 @@ typedef enum { //just for understanding cmd in handler cases
     JE    = 17,
     JNE   = 18,
     PRTS  = 19,
+    CALL  = 20,
+    RET   = 21,
+    PUSHR = 33,
+    POPR  = 34,
 
 } InterpretCmds;
 

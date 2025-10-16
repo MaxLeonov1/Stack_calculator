@@ -42,6 +42,10 @@ void ProcErrHandler ( Proc_Err_t proc_status ) {
             printf ( "Appeal to not existing register\n" );
             break;
         }
+        case Proc_Err_t::INCOR_ARG_ERR:
+        {
+            printf ( "Provided argument to command - incorrect\n" );
+        }
         case Proc_Err_t::PRC_SUCCSESFUL:
         {
             break;
@@ -106,14 +110,17 @@ Stack_Err_t StackErrorHandler ( Stack_t* stack, bool is_dump ) {
 
 void StackDump ( Stack_t* stack ) {
 
-    printf ( "-------------------------\n"
-             "stack [%p]\n"
+    printf ( "=========================\n"
+             "stack [%s%p%s]\n"
              "-------------------------\n"
-             "size = %d\n"
-             "capacity = %d\n"
-             "data [%p]\n"
+             "size = %s%d%s\n"
+             "capacity = %s%d%s\n"
+             "data [%s%p%s]\n"
              "-------------------------\n",
-             stack, stack->size, stack->capacity, stack->data );
+             BLUE, stack, RES_COL,
+             BLUE, stack->size, RES_COL,
+             BLUE, stack->capacity, RES_COL,
+             BLUE, stack->data, RES_COL );
 
     if ( stack->data != nullptr ) {
 
@@ -121,7 +128,7 @@ void StackDump ( Stack_t* stack ) {
 
     }
 
-    printf ( "-------------------------\n" );
+    printf ( "=========================\n" );
 
 }
 

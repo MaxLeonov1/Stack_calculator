@@ -31,6 +31,8 @@ Stack_Err_t StackIn         ( Stack_t* stack );
 Stack_Err_t RegistrPop      ( Cmd_Proc* proc, int reg_num );
 Stack_Err_t RegistrPush     ( Cmd_Proc* proc, int reg_num );
 Stack_Err_t PauseProc       ( void );
+Stack_Err_t ReturnToCall    ( Cmd_Proc* processor );
+Stack_Err_t CallCmd         ( Cmd_Proc* processor, STK_ELM_TYPE jmp_ind );
 Stack_Err_t JumpToCmd       ( Cmd_Proc* processor, STK_ELM_TYPE cmd_ind );
 Stack_Err_t JumpIf          ( Cmd_Proc* processor, STK_ELM_TYPE cmd_ind, Cmd_Jump_t type );
 

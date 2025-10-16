@@ -22,6 +22,7 @@ Proc_Err_t CmdProcessor ( const char* input_file_name,  Stack_Err_t stk_status )
     Cmd_Proc processor = {};
 
     StackCtor ( &processor.proc_stk, processor.stk_def_size );
+    StackCtor ( &processor.call_stk, processor.stk_def_size );
 
     FILE* input_file = fopen ( input_file_name, "r" );
     if ( input_file == nullptr ) return Proc_Err_t::FILE_OPEN_ERR;
@@ -32,7 +33,9 @@ Proc_Err_t CmdProcessor ( const char* input_file_name,  Stack_Err_t stk_status )
     status = ProcessCmds ( &processor, &stk_status );
     PROC_STATUS_CHECK
 
-    free(processor.cmd_buffer);
+    free( processor.cmd_buffer );
+    StackDtor ( &processor.proc_stk );
+    StackDtor ( &processor.call_stk );
 
     return status;
     
@@ -180,6 +183,16 @@ Stack_Err_t CmdHandler ( Cmd_Proc* processor , int cmd_code, STK_ELM_TYPE argume
             printf("==PROCESSOR_STACK==\n");
             PrintStackElements(&processor->proc_stk);
             printf("===================\n");
+            return status;
+        }
+        case InterpretCmds::CALL:
+        {
+            status = CallCmd ( processor, argument );
+            return status;
+        }
+        case InterpretCmds::RET:
+        {
+            status = ReturnToCall ( processor );
             return status;
         }
         case InterpretCmds::NULL_CMD:
