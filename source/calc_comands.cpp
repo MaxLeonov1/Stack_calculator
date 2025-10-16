@@ -313,3 +313,37 @@ Stack_Err_t JumpIf ( Cmd_Proc* processor, STK_ELM_TYPE cmd_ind, Cmd_Jump_t type 
     return status;
 
 }
+
+/*-----------------------------------------------------------------------------------------------*/
+
+Stack_Err_t Call ( Cmd_Proc* processor, STK_ELM_TYPE jmp_ind ) {
+
+    Stack_Err_t status = Stack_Err_t::STK_SUCCSESFUL;
+
+    status = StackPush ( &processor->call_stk, processor->cur_com_ind );
+    STK_STATUS_CHECK
+
+    status = JumpToCmd ( processor, jmp_ind );
+    STK_STATUS_CHECK
+
+    return status;
+
+}
+
+/*-----------------------------------------------------------------------------------------------*/
+
+Stack_Err_t ReturnToCall ( Cmd_Proc* processor ) {
+
+    Stack_Err_t status = Stack_Err_t::STK_SUCCSESFUL;
+
+    STK_ELM_TYPE jmp_ind = 0;
+    status = StackPop ( &processor->proc_stk, &jmp_ind );
+    STK_STATUS_CHECK
+
+    status = JumpToCmd ( processor, jmp_ind );
+    STK_STATUS_CHECK
+
+    return status;
+
+}
+

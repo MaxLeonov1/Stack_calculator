@@ -9,6 +9,7 @@
 typedef struct {
 
     STK_INIT ( proc_stk )
+    STK_INIT ( call_stk )
     size_t stk_def_size = 5;
 
     int  cur_com_ind = 0;
