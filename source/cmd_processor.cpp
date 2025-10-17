@@ -178,6 +178,11 @@ Stack_Err_t CmdHandler ( Cmd_Proc* processor , int cmd_code, STK_ELM_TYPE argume
             status = JumpIf ( processor, argument, Cmd_Jump_t::GREATER_AND_EQUAL );
             return status;
         }
+        case InterpretCmds::PRTR:
+        {
+            status = PrintRegValue ( processor, argument );
+            return status;
+        }
         case InterpretCmds::PRTS:
         {
             printf("==PROCESSOR_STACK==\n");

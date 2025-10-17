@@ -119,9 +119,9 @@ Proc_Err_t CmdConvToCode ( int elements, char* cmd, int* cmd_code, char* arg ) {
 
         if ( strcmp ( cmd, Asmblr_Cmd_Instr[ind].name) == 0 ) { 
 
-            //printf ( "%s\n", Asmblr_Cmd_Instr[ind].name );
+            // printf ( "cmd: %s\n", Asmblr_Cmd_Instr[ind].name );
             *cmd_code = RegisterCmdCodeHandler ( arg, Asmblr_Cmd_Instr[ind].cmd_code );
-            //printf ("elements: %d\n", elements);
+            // printf ("code: %d\n", *cmd_code);
 
             if ( *cmd_code <= 32 )
                 if ( (  Asmblr_Cmd_Instr[ind].is_arg && elements < 2 ) ||

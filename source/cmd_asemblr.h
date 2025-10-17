@@ -38,8 +38,6 @@ static Cmd_Instr Asmblr_Cmd_Instr[] = {
 
     {.name = "PUSH",  .cmd_code = 1,  .is_arg = 1 },
     {.name = "POP",   .cmd_code = 2,  .is_arg = 0 },
-    {.name = "PUSHR", .cmd_code = 33, .is_arg = 1 },
-    {.name = "POPR",  .cmd_code = 34, .is_arg = 1 },
     {.name = "SUM",   .cmd_code = 3,  .is_arg = 0 },
     {.name = "SUB",   .cmd_code = 4,  .is_arg = 0 },
     {.name = "DIV",   .cmd_code = 5,  .is_arg = 0 },
@@ -59,6 +57,10 @@ static Cmd_Instr Asmblr_Cmd_Instr[] = {
     {.name = "PRTS",  .cmd_code = 19, .is_arg = 0 },
     {.name = "CALL",  .cmd_code = 20, .is_arg = 1 },
     {.name = "RET",   .cmd_code = 21, .is_arg = 0 },
+    
+    {.name = "PUSHR", .cmd_code = 33, .is_arg = 1 },
+    {.name = "POPR",  .cmd_code = 34, .is_arg = 1 },
+    {.name = "PRTR",  .cmd_code = 35, .is_arg = 1 },
 
 };
 

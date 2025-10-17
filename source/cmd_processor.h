@@ -48,6 +48,7 @@ typedef enum { //just for understanding cmd in handler cases
     RET   = 21,
     PUSHR = 33,
     POPR  = 34,
+    PRTR  = 35,
 
 } InterpretCmds;
 

@@ -59,11 +59,11 @@ Stack_Err_t StackPop ( Stack_t* stack, STK_ELM_TYPE* value ) {
 
 /*-----------------------------------------------------------------------------------------------*/
 
-Stack_Err_t RegistrPush ( Cmd_Proc* proc, int reg_num ) {
+Stack_Err_t RegistrPush ( Cmd_Proc* processor, int reg_num ) {
 
     Stack_Err_t status = Stack_Err_t::STK_SUCCSESFUL;
 
-    status = StackPush ( &proc->proc_stk, proc->reg_buffer[reg_num] );
+    status = StackPush ( &processor->proc_stk, processor->reg_buffer[reg_num] );
     STK_STATUS_CHECK
 
     return status;
@@ -72,16 +72,16 @@ Stack_Err_t RegistrPush ( Cmd_Proc* proc, int reg_num ) {
 
 /*-----------------------------------------------------------------------------------------------*/
 
-Stack_Err_t RegistrPop ( Cmd_Proc* proc, int reg_num ) {
+Stack_Err_t RegistrPop ( Cmd_Proc* processor, int reg_num ) {
 
     Stack_Err_t status = Stack_Err_t::STK_SUCCSESFUL;
 
     STK_ELM_TYPE element = 0;
     
-    status = StackPop ( &proc->proc_stk , &element );
+    status = StackPop ( &processor->proc_stk , &element );
     STK_STATUS_CHECK
 
-    proc->reg_buffer[reg_num] = element;
+    processor->reg_buffer[reg_num] = element;
 
     return status;
 
@@ -341,7 +341,7 @@ Stack_Err_t ReturnToCall ( Cmd_Proc* processor ) {
     Stack_Err_t status = Stack_Err_t::STK_SUCCSESFUL;
 
     STK_ELM_TYPE jmp_ind = 0;
-    status = StackPop ( &processor->proc_stk, &jmp_ind );
+    status = StackPop ( &processor->call_stk , &jmp_ind );
     STK_STATUS_CHECK
 
     //StackDump ( &processor->call_stk ); 
@@ -353,3 +353,13 @@ Stack_Err_t ReturnToCall ( Cmd_Proc* processor ) {
 
 }
 
+/*-----------------------------------------------------------------------------------------------*/
+
+Stack_Err_t PrintRegValue ( Cmd_Proc* processor, STK_ELM_TYPE reg_num ) {
+
+    printf ( "REG[%sR%cX%s]: %s%ld%s\n",
+             BLUE, (char)('A' + reg_num), RES_COL, 
+             BLUE, processor->reg_buffer[reg_num], RES_COL );
+    return Stack_Err_t::STK_SUCCSESFUL;
+
+}
