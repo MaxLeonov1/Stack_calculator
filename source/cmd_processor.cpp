@@ -24,7 +24,7 @@ Proc_Err_t CmdProcessor ( const char* input_file_name,  Stack_Err_t stk_status )
     StackCtor ( &processor.proc_stk, processor.stk_def_size );
     StackCtor ( &processor.call_stk, processor.stk_def_size );
 
-    FILE* input_file = fopen ( input_file_name, "r" );
+    FILE* input_file = fopen ( input_file_name, "rb" );
     if ( input_file == nullptr ) return Proc_Err_t::FILE_OPEN_ERR;
 
     status = ScanCmdToBuffer ( input_file, &processor );

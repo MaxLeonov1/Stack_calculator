@@ -25,6 +25,7 @@ typedef struct {
 .proc_reg_num = 10, };
 
 /*-------------------------------------------------------*/
+/*============INSTRUCTIONS=FOR=COMMANDS==================*/
 
 typedef struct {
 
@@ -57,12 +58,15 @@ static Cmd_Instr Asmblr_Cmd_Instr[] = {
     {.name = "PRTS",  .cmd_code = 19, .is_arg = 0 },
     {.name = "CALL",  .cmd_code = 20, .is_arg = 1 },
     {.name = "RET",   .cmd_code = 21, .is_arg = 0 },
-    
+
     {.name = "PUSHR", .cmd_code = 33, .is_arg = 1 },
     {.name = "POPR",  .cmd_code = 34, .is_arg = 1 },
     {.name = "PRTR",  .cmd_code = 35, .is_arg = 1 },
 
 };
+
+/*============INSTRUCTIONS=FOR=ARGUMENTS==================*/
+
 
 /*-------------------------------------------------------------------------------------------------------------------*/
 

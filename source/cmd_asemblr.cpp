@@ -175,7 +175,7 @@ Proc_Err_t ArgConvToCode ( Cmd_Assemblr_t* assmblr, int elements, char* arg, lon
         return Proc_Err_t::PRC_SUCCSESFUL;
 
     }
-
+    
     return Proc_Err_t::INCOR_ARG_ERR;
 
 }
@@ -216,21 +216,11 @@ int RegisterCmdCodeHandler ( char* arg, int cmd_code ) {
 
 /*-----------------------------------------------------------------------------------------------*/
 
-// Proc_Err_t NonCmdCasesCheck ( int elements, long* cmd_num ) {
+Proc_Err_t IfRegConvToInd ( Cmd_Assemblr_t amsblr, char* reg_name, int reg_ind ) {
 
-//     if ( elements == -1 ) {
-//         (*cmd_num)--;
-//         continue;
-//     }
 
-//     if ( IsLabel(cmd) ) {
 
-//         int label_ind = atoi ( (const char*)( cmd + sizeof(char) ) );
-//         assmblr->labels[label_ind] = (cmd_ind - assmblr->spec_param_num)/2;
+}
 
-//         (*cmd_num)--;
-//         continue;
+/*-----------------------------------------------------------------------------------------------*/
 
-//     }
-
-// }
