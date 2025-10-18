@@ -142,41 +142,17 @@ Proc_Err_t CmdConvToCode ( int elements, char* cmd, int* cmd_code, char* arg ) {
 
 Proc_Err_t ArgConvToCode ( Cmd_Assemblr_t* assmblr, int elements, char* arg, long* arg_code ) {
 
-    if ( IsLabel(arg) ) {
+    for ( size_t i = 0; i < sizeof(Handlers) / sizeof(Handlers[0]); i++ ) {
 
-        int label_ind = atoi ( (const char*)( arg + sizeof(char) ) );
-        *arg_code = assmblr->labels[label_ind];
-        return Proc_Err_t::PRC_SUCCSESFUL;
-    
-    }
+        if ( Handlers[i].check(arg) ) {
 
-    if ( isdigit(arg[0]) || arg[0] == '-' ) {
+            return Handlers[i].handler(assmblr, arg, arg_code);
 
-        *arg_code = atoi ( (const char*)arg );
-        return Proc_Err_t::PRC_SUCCSESFUL;
-        //printf("aboba\n");
-    
-    }
-
-    if ( arg[0] == 'R' && arg[2] == 'X' ) {
-
-        if ( ( arg[1] - 'A' >= 0 ) && ( arg[1] - 'A' <= assmblr->proc_reg_num ) ) {
-
-            *arg_code = arg[1] - 'A';
-            return Proc_Err_t::PRC_SUCCSESFUL;
-
-        } else return Proc_Err_t::UNDEF_REGISTR_NUM_ERR;
+        }
 
     }
 
-    if ( arg[0] == '\0' ) {
-
-        *arg_code = 0;
-        return Proc_Err_t::PRC_SUCCSESFUL;
-
-    }
-    
-    return Proc_Err_t::INCOR_ARG_ERR;
+    return INCOR_ARG_ERR;
 
 }
 
@@ -184,7 +160,7 @@ Proc_Err_t ArgConvToCode ( Cmd_Assemblr_t* assmblr, int elements, char* arg, lon
 
 int IsLabel ( const char* arg ) {
 
-    if ( arg[0] == ':' ) {
+    if ( arg[0] == ':'  && isdigit(arg[1]) ) {
 
         return 1;
 

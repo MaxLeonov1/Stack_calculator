@@ -24,8 +24,24 @@ typedef struct {
 .spec_param_num = 1, \
 .proc_reg_num = 10, };
 
+/*-------------------------------------------------------------------------------------------------------------------*/
+/*=================================================MAIN=FUNCTIONS====================================================*/
+/*-------------------------------------------------------------------------------------------------------------------*/
+
+Proc_Err_t CmdAssmblr      ( const char* input_file_name, const char* output_file_name, Cmd_Assemblr_t* assmblr );
+Proc_Err_t CmdConvToCode   ( int elements, char* command, int* cmd_code, char* arg );
+Proc_Err_t ArgConvToCode   ( Cmd_Assemblr_t* assmblr, int elements, char* arg, long* arg_code );
+Proc_Err_t AsmblrScanFile  ( Cmd_Assemblr_t* assmblr, FILE* stream, long* cmd_num );
+Proc_Err_t AsmblrPrintFile ( Cmd_Assemblr_t* assmblr, FILE* stream, long cmd_num );
+
+/*-------------------------------------------------------------------------------------------------------------------*/
+
+int IsLabel                ( const char* arg );
+int RegisterCmdCodeHandler ( char* arg, int cmd_code );
+
 /*-------------------------------------------------------*/
-/*============INSTRUCTIONS=FOR=COMMANDS==================*/
+/*========+INSTRUCTIONS=FOR=COMMANDS=HANDLING============*/
+/*-------------------------------------------------------*/
 
 typedef struct {
 
@@ -65,21 +81,69 @@ static Cmd_Instr Asmblr_Cmd_Instr[] = {
 
 };
 
-/*============INSTRUCTIONS=FOR=ARGUMENTS==================*/
+/*-------------------------------------------------------------------------------------------------------------------*/
+/*========================================ARGUMENT=HANDLERS=AND=CHECKERS=============================================*/
+/*-------------------------------------------------------------------------------------------------------------------*/
 
+typedef struct {
+
+    bool       (*check)   (const char* arg);
+    Proc_Err_t (*handler) (Cmd_Assemblr_t* assmblr, const char* arg, long* arg_code );
+
+} ArgHandler;
 
 /*-------------------------------------------------------------------------------------------------------------------*/
 
-Proc_Err_t CmdAssmblr      ( const char* input_file_name, const char* output_file_name, Cmd_Assemblr_t* assmblr );
-Proc_Err_t CmdConvToCode   ( int elements, char* command, int* cmd_code, char* arg );
-Proc_Err_t ArgConvToCode   ( Cmd_Assemblr_t* assmblr, int elements, char* arg, long* arg_code );
-Proc_Err_t AsmblrScanFile  ( Cmd_Assemblr_t* assmblr, FILE* stream, long* cmd_num );
-Proc_Err_t AsmblrPrintFile ( Cmd_Assemblr_t* assmblr, FILE* stream, long cmd_num );
+static bool checkLable    ( const char* arg ) { return IsLabel(arg); }
+static bool checkRegister ( const char* arg ) { return ( arg[0] == 'R' && arg[2] == 'X' ); }
+static bool checkNumber   ( const char* arg ) { return ( isdigit(arg[0]) || ( arg[0] == '-' && isdigit(arg[1]) ) ); }
+static bool checkNoArg    ( const char* arg ) { return ( arg[0] == '\0' ); }
 
 /*-------------------------------------------------------------------------------------------------------------------*/
 
-int IsLabel                ( const char* arg );
-int RegisterCmdCodeHandler ( char* arg, int cmd_code );
+static Proc_Err_t handleLable ( Cmd_Assemblr_t* assmblr, const char* arg, long* arg_code ) {
+
+    int label_ind = atoi ( (const char*)( arg + sizeof(char) ) );
+    *arg_code = assmblr->labels[label_ind];
+    return Proc_Err_t::PRC_SUCCSESFUL;
+
+}
+
+static Proc_Err_t handleRegister ( Cmd_Assemblr_t* assmblr, const char* arg, long* arg_code ) {
+
+    if ( ( arg[1] - 'A' >= 0 ) && ( arg[1] - 'A' <= assmblr->proc_reg_num ) ) {
+
+        *arg_code = arg[1] - 'A';
+        return Proc_Err_t::PRC_SUCCSESFUL;
+
+    } else return Proc_Err_t::UNDEF_REGISTR_NUM_ERR;
+
+}
+
+static Proc_Err_t handleNumber ( Cmd_Assemblr_t* assmblr, const char* arg, long* arg_code ) {
+
+    *arg_code = atoi ( (const char*)arg );
+    return Proc_Err_t::PRC_SUCCSESFUL;
+
+}
+
+static Proc_Err_t handleNoArg ( Cmd_Assemblr_t* assmblr, const char* arg, long* arg_code ) {
+
+    *arg_code = 0;
+    return Proc_Err_t::PRC_SUCCSESFUL;
+
+}
+
+/*-------------------------------------------------------------------------------------------------------------------*/
+
+static ArgHandler Handlers[] = {
+
+    {checkNoArg,    handleNoArg   },
+    {checkNumber,   handleNumber  },
+    {checkRegister, handleRegister},
+    {checkLable,    handleLable   },
+
+};
 
 /*-------------------------------------------------------------------------------------------------------------------*/
 
