@@ -89,6 +89,37 @@ Stack_Err_t RegistrPop ( Cmd_Proc* processor, int reg_num ) {
 
 /*-----------------------------------------------------------------------------------------------*/
 
+Stack_Err_t MemoryPush ( Cmd_Proc* processor, int reg_num ) {
+
+    Stack_Err_t status = Stack_Err_t::STK_SUCCSESFUL;
+    int mem_ind = processor->reg_buffer[reg_num];
+
+    StackPush ( &processor->proc_stk, processor->ram[mem_ind] );
+    STK_STATUS_CHECK
+
+    return Stack_Err_t::STK_SUCCSESFUL;
+
+}
+
+/*-----------------------------------------------------------------------------------------------*/
+
+Stack_Err_t MemoryPop ( Cmd_Proc* processor, int reg_num ) {
+
+    Stack_Err_t status = Stack_Err_t::STK_SUCCSESFUL;
+    int mem_ind = processor->reg_buffer[reg_num];
+    STK_ELM_TYPE value = 0;
+
+    status = StackPop ( &processor->proc_stk, &value );
+    STK_STATUS_CHECK
+
+    processor->ram[mem_ind] = value;
+
+    return Stack_Err_t::STK_SUCCSESFUL;
+
+}
+
+/*-----------------------------------------------------------------------------------------------*/
+
 Stack_Err_t StackIn ( Stack_t* stack ) {
 
     Stack_Err_t  status = Stack_Err_t::STK_SUCCSESFUL;

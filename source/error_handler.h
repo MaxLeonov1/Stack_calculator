@@ -25,11 +25,19 @@ typedef enum {
 
 } Stack_Err_t;
 
+/*--------------------------------------------------------------------------------*/
+/*================ASSEMBLER=AND=PROCESSOR=ELEMENTS=CHECKERS=======================*/
 
 #define STK_STATUS_CHECK if ( status != Stack_Err_t::STK_SUCCSESFUL ) return status;
 #define PROC_STATUS_CHECK if ( status != Proc_Err_t::PRC_SUCCSESFUL ) return status;
 
-/*-------------------------------------------------------*/
+#define REG_EXISTANCE_CHECK                                   \
+if ( *arg_code >= 0 && *arg_code < assmblr->proc_reg_num )    \
+    return Proc_Err_t::PRC_SUCCSESFUL;                        \
+else return Proc_Err_t::UNDEF_REGISTR_NUM_ERR;                \
+
+/*---------------------------------------------------------------------------------*/
+/*=====================STACK=RELATED=====================*/
 //#define DEBUG
 
 const int CANARY_NUM = 0xFEE1DEAD;
@@ -80,6 +88,7 @@ typedef struct {
 #endif //DEBUG
 
 /*-------------------------------------------------------*/
+/*===================MAIN=FUNCTIONS======================*/
 
 void        ProcErrHandler          ( Proc_Err_t proc_status );
 void        PrintStackElements      ( Stack_t* stack );

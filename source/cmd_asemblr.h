@@ -1,6 +1,8 @@
 #ifndef __CMD_ASEMBLR__
 #define __CMD_ASEMBLR__
 
+#include <ctype.h>
+
 #include "error_handler.h"
 
 /*-------------------------------------------------------*/
@@ -30,14 +32,14 @@ typedef struct {
 
 Proc_Err_t CmdAssmblr      ( const char* input_file_name, const char* output_file_name, Cmd_Assemblr_t* assmblr );
 Proc_Err_t CmdConvToCode   ( int elements, char* command, int* cmd_code, char* arg );
-Proc_Err_t ArgConvToCode   ( Cmd_Assemblr_t* assmblr, int elements, char* arg, long* arg_code );
+Proc_Err_t ArgConvToCode   ( Cmd_Assemblr_t* assmblr, int* cmd_code, char* arg, long* arg_code );
 Proc_Err_t AsmblrScanFile  ( Cmd_Assemblr_t* assmblr, FILE* stream, long* cmd_num );
 Proc_Err_t AsmblrPrintFile ( Cmd_Assemblr_t* assmblr, FILE* stream, long cmd_num );
 
 /*-------------------------------------------------------------------------------------------------------------------*/
 
-int IsLabel                ( const char* arg );
-int RegisterCmdCodeHandler ( char* arg, int cmd_code );
+int IsLabel               ( const char* arg );
+Proc_Err_t ResolveCmdCode ( char* arg, int* cmd_code );
 
 /*-------------------------------------------------------*/
 /*========+INSTRUCTIONS=FOR=COMMANDS=HANDLING============*/
@@ -79,6 +81,9 @@ static Cmd_Instr Asmblr_Cmd_Instr[] = {
     {.name = "POPR",  .cmd_code = 34, .is_arg = 1 },
     {.name = "PRTR",  .cmd_code = 35, .is_arg = 1 },
 
+    {.name = "PUSHM", .cmd_code = 65, .is_arg = 1 },
+    {.name = "POPM",  .cmd_code = 66, .is_arg = 1 },
+
 };
 
 /*-------------------------------------------------------------------------------------------------------------------*/
@@ -92,11 +97,26 @@ typedef struct {
 
 } ArgHandler;
 
+typedef enum {
+
+    GENERAL = 0,
+    REGISTER = 1,
+    MEMORY = 2,
+
+} Arg_t;
+
 /*-------------------------------------------------------------------------------------------------------------------*/
 
 static bool checkLable    ( const char* arg ) { return IsLabel(arg); }
+
 static bool checkRegister ( const char* arg ) { return ( arg[0] == 'R' && arg[2] == 'X' ); }
-static bool checkNumber   ( const char* arg ) { return ( isdigit(arg[0]) || ( arg[0] == '-' && isdigit(arg[1]) ) ); }
+
+static bool checkMemArg   ( const char* arg ) { return ( arg[0] == '[' && arg[4] == ']' &&
+                                                         arg[1] == 'R' && arg[3] == 'X' ); }
+
+static bool checkNumber   ( const char* arg ) { return ( isdigit(arg[0]) ||
+                                                       ( arg[0] == '-' && isdigit(arg[1]) ) ); }
+
 static bool checkNoArg    ( const char* arg ) { return ( arg[0] == '\0' ); }
 
 /*-------------------------------------------------------------------------------------------------------------------*/
@@ -134,13 +154,24 @@ static Proc_Err_t handleNoArg ( Cmd_Assemblr_t* assmblr, const char* arg, long* 
 
 }
 
+static Proc_Err_t handleMemArg ( Cmd_Assemblr_t* assmblr, const char* arg, long* arg_code ) {
+
+    if ( ( arg[2] - 'A' >= 0 ) && ( arg[2] - 'A' <= assmblr->proc_reg_num ) ) {
+
+        *arg_code = arg[2] - 'A';
+        return Proc_Err_t::PRC_SUCCSESFUL;
+
+    } else return Proc_Err_t::UNDEF_REGISTR_NUM_ERR;
+
+
+}
+
 /*-------------------------------------------------------------------------------------------------------------------*/
 
 static ArgHandler Handlers[] = {
 
     {checkNoArg,    handleNoArg   },
     {checkNumber,   handleNumber  },
-    {checkRegister, handleRegister},
     {checkLable,    handleLable   },
 
 };

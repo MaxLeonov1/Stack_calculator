@@ -14,9 +14,11 @@ typedef struct {
 
     int  cur_com_ind = 0;
     long cmd_num = 0;
+    long ram_size = 100;
 
     STK_ELM_TYPE* cmd_buffer = nullptr;
     STK_ELM_TYPE  reg_buffer[10] = {0};
+    STK_ELM_TYPE* ram = (STK_ELM_TYPE*) calloc ( ram_size, sizeof(STK_ELM_TYPE) );
 
 } Cmd_Proc;
 
@@ -49,6 +51,8 @@ typedef enum { //just for understanding cmd in handler cases
     PUSHR = 33,
     POPR  = 34,
     PRTR  = 35,
+    PUSHM = 65,
+    POPM  = 66,
 
 } InterpretCmds;
 

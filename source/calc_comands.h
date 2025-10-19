@@ -30,6 +30,8 @@ Stack_Err_t StackSqrt       ( Stack_t* stack );
 Stack_Err_t StackIn         ( Stack_t* stack );
 Stack_Err_t RegistrPop      ( Cmd_Proc* processor, int reg_num );
 Stack_Err_t RegistrPush     ( Cmd_Proc* processor, int reg_num );
+Stack_Err_t MemoryPush      ( Cmd_Proc* processor, int reg_num );
+Stack_Err_t MemoryPop       ( Cmd_Proc* processor, int reg_num );
 Stack_Err_t PauseProc       ( void );
 Stack_Err_t PrintRegValue   ( Cmd_Proc* processor, STK_ELM_TYPE reg_num );
 Stack_Err_t ReturnToCall    ( Cmd_Proc* processor );

@@ -72,7 +72,6 @@ Proc_Err_t ProcessCmds ( Cmd_Proc* processor, Stack_Err_t* stk_status ) {
 Stack_Err_t CmdHandler ( Cmd_Proc* processor , int cmd_code, STK_ELM_TYPE argument ) {
 
     Stack_Err_t status = Stack_Err_t::STK_SUCCSESFUL;
-    //printf("%d\n", cmd_code);
     switch ( cmd_code ) {
 
         case InterpretCmds::PUSH:
@@ -119,6 +118,16 @@ Stack_Err_t CmdHandler ( Cmd_Proc* processor , int cmd_code, STK_ELM_TYPE argume
         case InterpretCmds::PUSHR:
         {
             status = RegistrPush ( processor, argument );
+            return status;
+        }
+        case InterpretCmds::PUSHM:
+        {
+            status = MemoryPush ( processor, argument );
+            return status;
+        }
+        case InterpretCmds::POPM:
+        {
+            status = MemoryPop ( processor, argument );
             return status;
         }
         case InterpretCmds::IN:

@@ -80,7 +80,7 @@ Proc_Err_t AsmblrScanFile ( Cmd_Assemblr_t* assmblr, FILE* stream, long* cmd_num
 
         status = CmdConvToCode ( elements, cmd, &cmd_code, arg );
         PROC_STATUS_CHECK
-        status = ArgConvToCode ( assmblr, elements, arg, &arg_code );
+        status = ArgConvToCode ( assmblr, &cmd_code, arg, &arg_code );
         PROC_STATUS_CHECK
 
         assmblr->cmd_buffer[cmd_ind] = cmd_code;
@@ -119,8 +119,10 @@ Proc_Err_t CmdConvToCode ( int elements, char* cmd, int* cmd_code, char* arg ) {
 
         if ( strcmp ( cmd, Asmblr_Cmd_Instr[ind].name) == 0 ) { 
 
+            *cmd_code = Asmblr_Cmd_Instr[ind].cmd_code;
             // printf ( "cmd: %s\n", Asmblr_Cmd_Instr[ind].name );
-            *cmd_code = RegisterCmdCodeHandler ( arg, Asmblr_Cmd_Instr[ind].cmd_code );
+            status = ResolveCmdCode ( arg, cmd_code );
+            PROC_STATUS_CHECK
             // printf ("code: %d\n", *cmd_code);
 
             if ( *cmd_code <= 32 )
@@ -140,19 +142,37 @@ Proc_Err_t CmdConvToCode ( int elements, char* cmd, int* cmd_code, char* arg ) {
 
 /*-----------------------------------------------------------------------------------------------*/
 
-Proc_Err_t ArgConvToCode ( Cmd_Assemblr_t* assmblr, int elements, char* arg, long* arg_code ) {
+Proc_Err_t ArgConvToCode ( Cmd_Assemblr_t* assmblr, int* cmd_code, char* arg, long* arg_code ) {
 
-    for ( size_t i = 0; i < sizeof(Handlers) / sizeof(Handlers[0]); i++ ) {
+    char arg_t = (char)( *cmd_code >> 5 );
 
-        if ( Handlers[i].check(arg) ) {
+    switch (arg_t) {
 
-            return Handlers[i].handler(assmblr, arg, arg_code);
+        case Arg_t::GENERAL:
 
-        }
+            for ( size_t i = 0; i < sizeof(Handlers) / sizeof(Handlers[0]); i++ ) {
+
+                if ( Handlers[i].check(arg) ) {
+
+                    return Handlers[i].handler(assmblr, arg, arg_code);
+
+                }
+
+            }
+
+            return Proc_Err_t::INCOR_ARG_ERR;
+        
+        case Arg_t::REGISTER:
+
+            *arg_code = arg[1] - 'A';
+            REG_EXISTANCE_CHECK
+
+        case Arg_t::MEMORY:
+
+            *arg_code = arg[2] - 'A';
+            REG_EXISTANCE_CHECK
 
     }
-
-    return INCOR_ARG_ERR;
 
 }
 
@@ -174,29 +194,27 @@ int IsLabel ( const char* arg ) {
 
 /*-----------------------------------------------------------------------------------------------*/
 
-int RegisterCmdCodeHandler ( char* arg, int cmd_code ) {
+Proc_Err_t ResolveCmdCode ( char* arg, int* cmd_code ) {
 
-    //printf ("arg: %s\n", arg);
+    if ( arg[0] == 'R' && arg[2] == 'X' ) {
 
-    if ( arg[0] == 'R' ) {
-
-        //printf ("%d\n", cmd_code);
-
-        if ( cmd_code > 32 ) return cmd_code;
-
-        else return cmd_code + 32;
+        if ( *cmd_code < 32 ) *cmd_code += 32;
+        else if ( *cmd_code > 64 ) return Proc_Err_t::INCOR_ARG_ERR;
     
-    } else return cmd_code;
+    }
+
+    if ( arg[0] == '[' && arg[4] == ']' &&
+         arg[1] == 'R' && arg[3] == 'X' ) {
+
+        if ( *cmd_code < 32 ) *cmd_code += 64;
+        else if ( *cmd_code < 64 ) return Proc_Err_t::INCOR_ARG_ERR;
+
+    }
+
+    return Proc_Err_t::PRC_SUCCSESFUL;
     
 }
 
 /*-----------------------------------------------------------------------------------------------*/
 
-Proc_Err_t IfRegConvToInd ( Cmd_Assemblr_t amsblr, char* reg_name, int reg_ind ) {
-
-
-
-}
-
-/*-----------------------------------------------------------------------------------------------*/
 
