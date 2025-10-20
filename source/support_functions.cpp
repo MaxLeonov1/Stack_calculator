@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <math.h>
 #include <sys/stat.h>
 
 #include "support_functions.h"
@@ -36,4 +37,13 @@ int FileLineCount ( const char* filename ) {
 
     return line_num;
 
+}
+
+
+
+int DoubleCompare (double double_1, double double_2) {
+
+    const double error = 1e-6;
+
+    return (fabs (double_1 - double_2) < error) ? 1 : 0;
 }

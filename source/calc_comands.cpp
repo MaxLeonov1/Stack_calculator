@@ -4,6 +4,7 @@
 #include <math.h>
 
 #include "error_handler.h"
+#include "support_functions.h"
 #include "stack_creation.h"
 #include "cmd_processor.h"
 #include "calc_comands.h"
@@ -92,7 +93,7 @@ Stack_Err_t RegistrPop ( Cmd_Proc* processor, int reg_num ) {
 Stack_Err_t MemoryPush ( Cmd_Proc* processor, int reg_num ) {
 
     Stack_Err_t status = Stack_Err_t::STK_SUCCSESFUL;
-    int mem_ind = processor->reg_buffer[reg_num];
+    int mem_ind = (int)processor->reg_buffer[reg_num];
 
     StackPush ( &processor->proc_stk, processor->ram[mem_ind] );
     STK_STATUS_CHECK
@@ -106,7 +107,7 @@ Stack_Err_t MemoryPush ( Cmd_Proc* processor, int reg_num ) {
 Stack_Err_t MemoryPop ( Cmd_Proc* processor, int reg_num ) {
 
     Stack_Err_t status = Stack_Err_t::STK_SUCCSESFUL;
-    int mem_ind = processor->reg_buffer[reg_num];
+    int mem_ind = (int)processor->reg_buffer[reg_num];
     STK_ELM_TYPE value = 0;
 
     status = StackPop ( &processor->proc_stk, &value );
@@ -126,7 +127,7 @@ Stack_Err_t StackIn ( Stack_t* stack ) {
     STK_ELM_TYPE value  = 0;
 
     printf ( "Inter Push Value: " );
-    scanf ( "%ld", &value );
+    scanf ( "%lf", &value );
 
     status = StackPush ( stack, value );
 
@@ -249,13 +250,49 @@ Stack_Err_t StackDiv ( Stack_t* stack ) {
 
 /*-----------------------------------------------------------------------------------------------*/
 
+Stack_Err_t StackSin ( Stack_t* stack ) {
+
+    Stack_Err_t status = STK_SUCCSESFUL;
+
+    STK_ELM_TYPE element = 0;
+
+    status = StackPop ( stack, &element );
+    STK_STATUS_CHECK
+
+    StackPush ( stack, (STK_ELM_TYPE) sin ( (double)element ) );
+    STK_STATUS_CHECK
+
+    return status;
+
+}
+
+/*-----------------------------------------------------------------------------------------------*/
+
+Stack_Err_t StackCos ( Stack_t* stack ) {
+
+    Stack_Err_t status = STK_SUCCSESFUL;
+
+    STK_ELM_TYPE element = 0;
+
+    status = StackPop ( stack, &element );
+    STK_STATUS_CHECK
+
+    StackPush ( stack, (STK_ELM_TYPE) cos ( (double)element ) );
+    STK_STATUS_CHECK
+
+    return status;
+
+}
+
+/*-----------------------------------------------------------------------------------------------*/
+
 Stack_Err_t StackOut ( Stack_t* stack ) {
 
     Stack_Err_t status = STK_SUCCSESFUL;
 
     STK_ELM_TYPE value = stack->data[stack->size - 1];
 
-    printf( "CURRENT RESULT: %s%ld%s\n", BLUE, value, RES_COL );
+    printf( "CURRENT RESULT: %s%lf%s\n", BLUE, value, RES_COL );
 
     return status;
 
@@ -282,7 +319,7 @@ Stack_Err_t StackSqrt ( Stack_t* stack ) {
 
 /*-----------------------------------------------------------------------------------------------*/
 
-Stack_Err_t JumpToCmd ( Cmd_Proc* processor, STK_ELM_TYPE cmd_ind ) {
+Stack_Err_t JumpToCmd ( Cmd_Proc* processor, long cmd_ind ) {
 
     Stack_Err_t status = Stack_Err_t::STK_SUCCSESFUL;
 
@@ -302,7 +339,7 @@ Stack_Err_t PauseProc ( void ) {
 
 /*-----------------------------------------------------------------------------------------------*/
 
-Stack_Err_t JumpIf ( Cmd_Proc* processor, STK_ELM_TYPE cmd_ind, Cmd_Jump_t type ) {
+Stack_Err_t JumpIf ( Cmd_Proc* processor, long cmd_ind, Cmd_Jump_t type ) {
 
     Stack_Err_t status = Stack_Err_t::STK_SUCCSESFUL;
 
@@ -325,11 +362,11 @@ Stack_Err_t JumpIf ( Cmd_Proc* processor, STK_ELM_TYPE cmd_ind, Cmd_Jump_t type 
             STK_STATUS_CHECK
             break;
         case Cmd_Jump_t::EQUAL:
-            if ( element_1 == element_2 ) status = JumpToCmd ( processor, cmd_ind );
+            if ( DoubleCompare( element_1, element_2 ) ) status = JumpToCmd ( processor, cmd_ind );
             STK_STATUS_CHECK
             break;
         case Cmd_Jump_t::NOT_EQUAL:
-            if ( element_1 != element_2 ) status = JumpToCmd ( processor, cmd_ind );
+            if ( !DoubleCompare( element_1, element_2 ) ) status = JumpToCmd ( processor, cmd_ind );
             STK_STATUS_CHECK
             break;
         case Cmd_Jump_t::GREATER:
@@ -349,7 +386,7 @@ Stack_Err_t JumpIf ( Cmd_Proc* processor, STK_ELM_TYPE cmd_ind, Cmd_Jump_t type 
 
 /*-----------------------------------------------------------------------------------------------*/
 
-Stack_Err_t CallCmd ( Cmd_Proc* processor, STK_ELM_TYPE jmp_ind ) {
+Stack_Err_t CallCmd ( Cmd_Proc* processor, long jmp_ind ) {
 
     Stack_Err_t status = Stack_Err_t::STK_SUCCSESFUL;
 
@@ -377,7 +414,7 @@ Stack_Err_t ReturnToCall ( Cmd_Proc* processor ) {
 
     //StackDump ( &processor->call_stk ); 
 
-    status = JumpToCmd ( processor, jmp_ind );
+    status = JumpToCmd ( processor, (long)jmp_ind );
     STK_STATUS_CHECK
 
     return status;
@@ -386,11 +423,32 @@ Stack_Err_t ReturnToCall ( Cmd_Proc* processor ) {
 
 /*-----------------------------------------------------------------------------------------------*/
 
-Stack_Err_t PrintRegValue ( Cmd_Proc* processor, STK_ELM_TYPE reg_num ) {
+Stack_Err_t PrintRegValue ( Cmd_Proc* processor, int reg_num ) {
 
-    printf ( "REG[%sR%cX%s]: %s%ld%s\n",
+    printf ( "REG[%sR%cX%s]: %s%lf%s\n",
              BLUE, (char)('A' + reg_num), RES_COL, 
              BLUE, processor->reg_buffer[reg_num], RES_COL );
+    return Stack_Err_t::STK_SUCCSESFUL;
+
+}
+
+/*-----------------------------------------------------------------------------------------------*/
+
+#include <windows.h>
+
+Stack_Err_t DrawVideoMemory ( Cmd_Proc* processor ) {
+
+    //printf("%d\n",processor->ram_size);
+
+    printf ( "\033[2J\033[3J\033[H" );
+    
+    for ( int i = 0; i < processor->ram_size; i++ ) {
+
+        printf ( "%c", (char)processor->ram[i]);
+        if ( i % 80 == 79 ) printf ("\n");
+
+    }
+
     return Stack_Err_t::STK_SUCCSESFUL;
 
 }

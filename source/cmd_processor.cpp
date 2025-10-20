@@ -21,6 +21,8 @@ Proc_Err_t CmdProcessor ( const char* input_file_name,  Stack_Err_t stk_status )
 
     Cmd_Proc processor = {};
 
+    //printf("[%ld]\n", processor.ram_size);
+
     StackCtor ( &processor.proc_stk, processor.stk_def_size );
     StackCtor ( &processor.call_stk, processor.stk_def_size );
 
@@ -57,6 +59,7 @@ Proc_Err_t ProcessCmds ( Cmd_Proc* processor, Stack_Err_t* stk_status ) {
         //printf ( "%d %ld\n", cmd_code, argument );
 
         *stk_status = CmdHandler ( processor, cmd_code, argument );
+        //printf ( "%s%d%s\n", BLUE, *stk_status, RES_COL );
         if ( *stk_status != Stack_Err_t::STK_SUCCSESFUL ) return Proc_Err_t::ERR_IN_STACK_TERMINATION;
 
         if ( cmd_code == InterpretCmds::HLT ) return status;
@@ -72,6 +75,7 @@ Proc_Err_t ProcessCmds ( Cmd_Proc* processor, Stack_Err_t* stk_status ) {
 Stack_Err_t CmdHandler ( Cmd_Proc* processor , int cmd_code, STK_ELM_TYPE argument ) {
 
     Stack_Err_t status = Stack_Err_t::STK_SUCCSESFUL;
+
     switch ( cmd_code ) {
 
         case InterpretCmds::PUSH:
@@ -110,24 +114,34 @@ Stack_Err_t CmdHandler ( Cmd_Proc* processor , int cmd_code, STK_ELM_TYPE argume
             status = StackSqrt ( &processor->proc_stk );
             return status;
         }
+        case InterpretCmds::SIN:
+        {
+            status = StackSin ( &processor->proc_stk );
+            return status;
+        }
+        case InterpretCmds::COS:
+        {
+            status = StackCos ( &processor->proc_stk );
+            return status;
+        }
         case InterpretCmds::POPR:
         {
-            status = RegistrPop ( processor, argument );
+            status = RegistrPop ( processor, (int)argument );
             return status;
         }
         case InterpretCmds::PUSHR:
         {
-            status = RegistrPush ( processor, argument );
+            status = RegistrPush ( processor, (int)argument );
             return status;
         }
         case InterpretCmds::PUSHM:
         {
-            status = MemoryPush ( processor, argument );
+            status = MemoryPush ( processor, (int)argument );
             return status;
         }
         case InterpretCmds::POPM:
         {
-            status = MemoryPop ( processor, argument );
+            status = MemoryPop ( processor, (int)argument );
             return status;
         }
         case InterpretCmds::IN:
@@ -154,42 +168,42 @@ Stack_Err_t CmdHandler ( Cmd_Proc* processor , int cmd_code, STK_ELM_TYPE argume
         }
         case InterpretCmds::JMP:
         {
-            status = JumpToCmd ( processor, argument );
+            status = JumpToCmd ( processor, (int)argument );
             return status;
         }
         case InterpretCmds::JB:
         {
-            status = JumpIf ( processor, argument, Cmd_Jump_t::BELOW );
+            status = JumpIf ( processor, (int)argument, Cmd_Jump_t::BELOW );
             return status;
         }
         case InterpretCmds::JBE:
         {
-            status = JumpIf ( processor, argument, Cmd_Jump_t::BELOW_AND_EQUAL );
+            status = JumpIf ( processor, (int)argument, Cmd_Jump_t::BELOW_AND_EQUAL );
             return status;
         }
         case InterpretCmds::JE:
         {
-            status = JumpIf ( processor, argument, Cmd_Jump_t::EQUAL );
+            status = JumpIf ( processor, (int)argument, Cmd_Jump_t::EQUAL );
             return status;
         }
         case InterpretCmds::JNE:
         {
-            status = JumpIf ( processor, argument, Cmd_Jump_t::NOT_EQUAL );
+            status = JumpIf ( processor, (int)argument, Cmd_Jump_t::NOT_EQUAL );
             return status;
         }
         case InterpretCmds::JA:
         {
-            status = JumpIf ( processor, argument, Cmd_Jump_t::GREATER );
+            status = JumpIf ( processor, (int)argument, Cmd_Jump_t::GREATER );
             return status;
         }
         case InterpretCmds::JAE:
         {
-            status = JumpIf ( processor, argument, Cmd_Jump_t::GREATER_AND_EQUAL );
+            status = JumpIf ( processor, (int)argument, Cmd_Jump_t::GREATER_AND_EQUAL );
             return status;
         }
         case InterpretCmds::PRTR:
         {
-            status = PrintRegValue ( processor, argument );
+            status = PrintRegValue ( processor, (int)argument );
             return status;
         }
         case InterpretCmds::PRTS:
@@ -201,12 +215,17 @@ Stack_Err_t CmdHandler ( Cmd_Proc* processor , int cmd_code, STK_ELM_TYPE argume
         }
         case InterpretCmds::CALL:
         {
-            status = CallCmd ( processor, argument );
+            status = CallCmd ( processor, (int)argument );
             return status;
         }
         case InterpretCmds::RET:
         {
             status = ReturnToCall ( processor );
+            return status;
+        }
+        case InterpretCmds::DRAW:
+        {
+            status = DrawVideoMemory ( processor );
             return status;
         }
         case InterpretCmds::NULL_CMD:
@@ -245,7 +264,7 @@ Proc_Err_t ScanCmdToBuffer ( FILE* input_file, Cmd_Proc* processor ) {
 
         STK_ELM_TYPE element = 0;
 
-        fscanf ( input_file, "%ld", &element );
+        fscanf ( input_file, "%lf", &element );
 
         processor->cmd_buffer[scan_ind] = element;
 

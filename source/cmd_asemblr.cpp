@@ -102,7 +102,7 @@ Proc_Err_t AsmblrPrintFile ( Cmd_Assemblr_t* assmblr, FILE* stream, long cmd_num
 
     while ( ind < 2*( cmd_num ) + assmblr->spec_param_num ) {
 
-        fprintf ( stream, "%ld ", assmblr->cmd_buffer[ind] );
+        fprintf ( stream, "%ld ", (long)assmblr->cmd_buffer[ind] );
         ind++;
 
     }
@@ -120,10 +120,10 @@ Proc_Err_t CmdConvToCode ( int elements, char* cmd, int* cmd_code, char* arg ) {
         if ( strcmp ( cmd, Asmblr_Cmd_Instr[ind].name) == 0 ) { 
 
             *cmd_code = Asmblr_Cmd_Instr[ind].cmd_code;
-            // printf ( "cmd: %s\n", Asmblr_Cmd_Instr[ind].name );
+            //printf ( "cmd: %s\n", Asmblr_Cmd_Instr[ind].name );
             status = ResolveCmdCode ( arg, cmd_code );
             PROC_STATUS_CHECK
-            // printf ("code: %d\n", *cmd_code);
+            //printf ("code: %d\n", *cmd_code);
 
             if ( *cmd_code <= 32 )
                 if ( (  Asmblr_Cmd_Instr[ind].is_arg && elements < 2 ) ||

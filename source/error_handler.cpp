@@ -2,6 +2,7 @@
 #include <stdio.h>
 
 #include "error_handler.h"
+#include "support_functions.h"
 #include "stack_creation.h"
 #include "colors.h"
 
@@ -140,14 +141,14 @@ void PrintStackElements ( Stack_t* stack ) {
 
         if ( ind < stack->size ) {
 
-            printf ( "* [%d] = %s%ld%s %s%s%s\n", 
+            printf ( "* [%d] = %s%lf%s %s%s%s\n", 
                      ind,
                      BLUE, stack->data[ind], RES_COL,
                      RED, DataSpecialParamHandler ( stack->data[ind] ), RES_COL );
 
         } else {
 
-            printf ( "  [%d] = %s%ld%s %s%s%s\n",
+            printf ( "  [%d] = %s%lf%s %s%s%s\n",
                      ind,
                      BLUE, stack->data[ind], RES_COL,
                      RED, DataSpecialParamHandler ( stack->data[ind] ), RES_COL );
@@ -162,17 +163,8 @@ void PrintStackElements ( Stack_t* stack ) {
 
 const char* DataSpecialParamHandler ( STK_ELM_TYPE param ) {
 
-    switch ( param ) {
-
-        case CANARY_NUM:
-            return "(CANARY)";
-
-        case POISON_NUM:
-            return "(POISON)";
-
-        default:
-            return " ";
-
-    }
+    if      ( DoubleCompare ( param, CANARY_NUM ) ) return "(CANARY)";
+    else if ( DoubleCompare ( param, POISON_NUM ) ) return "(POISON)";
+    else return " ";   
 
 }

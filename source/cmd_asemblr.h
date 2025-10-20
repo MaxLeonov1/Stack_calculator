@@ -76,6 +76,9 @@ static Cmd_Instr Asmblr_Cmd_Instr[] = {
     {.name = "PRTS",  .cmd_code = 19, .is_arg = 0 },
     {.name = "CALL",  .cmd_code = 20, .is_arg = 1 },
     {.name = "RET",   .cmd_code = 21, .is_arg = 0 },
+    {.name = "DRAW",  .cmd_code = 22, .is_arg = 0 },
+    {.name = "SIN",   .cmd_code = 23, .is_arg = 0 },
+    {.name = "COS",   .cmd_code = 24, .is_arg = 0 },
 
     {.name = "PUSHR", .cmd_code = 33, .is_arg = 1 },
     {.name = "POPR",  .cmd_code = 34, .is_arg = 1 },

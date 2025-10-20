@@ -40,10 +40,10 @@ else return Proc_Err_t::UNDEF_REGISTR_NUM_ERR;                \
 /*=====================STACK=RELATED=====================*/
 //#define DEBUG
 
-const int CANARY_NUM = 0xFEE1DEAD;
-const int POISON_NUM = 0xDEADFA11;
+const double POISON_NUM = 111111111;
+const double CANARY_NUM = 666666666;
 
-typedef long STK_ELM_TYPE;
+typedef double STK_ELM_TYPE;
 /*-------------------------------------------------------*/
 
 typedef struct {
