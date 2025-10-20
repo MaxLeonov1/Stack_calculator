@@ -35,7 +35,8 @@ Proc_Err_t CmdProcessor ( const char* input_file_name,  Stack_Err_t stk_status )
     status = ProcessCmds ( &processor, &stk_status );
     PROC_STATUS_CHECK
 
-    free( processor.cmd_buffer );
+    free ( processor.ram );
+    free ( processor.cmd_buffer );
     StackDtor ( &processor.proc_stk );
     StackDtor ( &processor.call_stk );
 
