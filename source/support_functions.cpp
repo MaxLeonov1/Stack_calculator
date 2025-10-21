@@ -19,23 +19,32 @@ long long FileByteCount ( const char* filename ) {
 
 
 
-int FileLineCount ( const char* filename ) {
+void FileGetInfo ( FILE* stream, File_Info_t* file_info ) {
 
-    FILE* stream = fopen ( filename, "r" );
-    if ( stream == nullptr ) return 0;
-
-    int symbol   = 0;
-    int line_num = 1;
+    int  symbol = 0;
+    long line_size = 0;
+    long max_line_size = 0;
+    long line_num = 1;
+    file_info->byte_num = FileByteCount ( file_info->filename );
 
     while ( ( symbol = getc(stream) ) != EOF ) {
 
-        if ( symbol == '\n' ) line_num++;
+        line_size++;
+
+        if ( symbol == '\n' ) {
+
+            line_num++;
+            max_line_size = ( max_line_size > line_size ) ? max_line_size : line_size;
+            line_size = 0;
+
+        }
 
     }
 
-    fclose(stream);
+    file_info->line_num = line_num;
+    file_info->max_line_size = max_line_size;
 
-    return line_num;
+    fseek( stream, 0, SEEK_SET );
 
 }
 

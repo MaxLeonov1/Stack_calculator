@@ -18,16 +18,13 @@ int main ( int argc, char const *argv[] )
     Stack_Err_t stack_status = Stack_Err_t::STK_SUCCSESFUL;
     Proc_Err_t  proc_status  = Proc_Err_t::PRC_SUCCSESFUL;
 
-    ASSMBLR( ass_1 )
+    INIT_ASM ( assmblr )
 
-    proc_status = CmdAssmblr ( input_filename, byte_filename, &ass_1 );
+    proc_status = CmdAssmblr ( input_filename, byte_filename, &assmblr );
     ProcErrHandler ( proc_status );
 
-    proc_status = CmdAssmblr ( input_filename, byte_filename, &ass_1 );
-    ProcErrHandler ( proc_status );
-
-    proc_status = CmdProcessor ( byte_filename, stack_status );
-    ProcErrHandler ( proc_status );
+    // proc_status = CmdProcessor ( byte_filename, stack_status );
+    // ProcErrHandler ( proc_status );
 
     return 0;
 }

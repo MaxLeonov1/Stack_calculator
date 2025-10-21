@@ -4,12 +4,12 @@
 #include <ctype.h>
 
 #include "cmd_asemblr.h"
-#include "cmd_processor.h"
 #include "support_functions.h"
 #include "error_handler.h"
 
 const size_t max_cmd_line_size = 100;
 const size_t max_cmd_size = 20;
+
 
 /*-----------------------------------------------------------------------------------------------*/
 
@@ -23,16 +23,19 @@ Proc_Err_t CmdAssmblr ( const char* input_file_name, const char* output_file_nam
     if ( input_file == nullptr || output_file == nullptr ) 
         return Proc_Err_t::FILE_OPEN_ERR;
 
-    long cmd_num = FileLineCount(input_file_name);
-    if ( cmd_num == 0 ) return Proc_Err_t::FILE_OPEN_ERR;
+    INIT_FILE_INFO ( file_info, input_file_name )
+    FileGetInfo ( input_file, &file_info );
+    assmblr->cmd_num = file_info.line_num;
 
-    assmblr->cmd_buffer = (STK_ELM_TYPE*) calloc ( 2*cmd_num + 5, sizeof(STK_ELM_TYPE) );
+    assmblr->fread_buffer = (char*) calloc ( file_info.byte_num, sizeof(char) );
+    fread ( assmblr->fread_buffer, sizeof(char), file_info.byte_num + 5, input_file );
+    assmblr->cmd_buffer = (STK_ELM_TYPE*) calloc ( 2*file_info.line_num, sizeof(STK_ELM_TYPE) );
 
-    status = AsmblrScanFile ( assmblr, input_file, &cmd_num );
+    AsmblrScanFile( assmblr );
 
-    assmblr->cmd_buffer[0] = cmd_num;
+    // assmblr->cmd_buffer[0] = cmd_num;
 
-    status = AsmblrPrintFile ( assmblr, output_file, cmd_num );
+    // status = AsmblrPrintFile ( assmblr, output_file, cmd_num );
 
     free(assmblr->cmd_buffer);
     fclose(input_file);
@@ -44,53 +47,124 @@ Proc_Err_t CmdAssmblr ( const char* input_file_name, const char* output_file_nam
 
 /*-----------------------------------------------------------------------------------------------*/
 
-Proc_Err_t AsmblrScanFile ( Cmd_Assemblr_t* assmblr, FILE* stream, long* cmd_num ) { //TODO переделать под онегина
+// Proc_Err_t AsmblrScanFile ( Cmd_Assemblr_t* assmblr, FILE* stream, long* cmd_num ) { //TODO переделать под онегина
+
+//     Proc_Err_t status = Proc_Err_t::PRC_SUCCSESFUL;
+
+//     char* cmd_line = (char*) calloc ( max_cmd_line_size, sizeof(char) );
+
+//     int cmd_ind = assmblr->spec_param_num;
+
+//     while ( fgets ( cmd_line, max_cmd_line_size, stream ) ) {
+
+//         char cmd[max_cmd_size] = {0};
+//         char arg[max_cmd_size] = {0};
+
+//         int  cmd_code = 0;
+//         long arg_code = 0;
+//         int  elements = 0;
+        
+//         elements = sscanf ( cmd_line, "%s %s", cmd, arg );
+
+//         if ( elements == -1 ) {
+//             (*cmd_num)--;
+//             continue;
+//         }
+
+//         if ( IsLabel(cmd) ) {
+
+//             int label_ind = atoi ( (const char*)( cmd + sizeof(char) ) );
+//             assmblr->labels[label_ind] = (cmd_ind - assmblr->spec_param_num)/2;
+
+//             (*cmd_num)--;
+//             continue;
+
+//         }
+
+//         status = CmdConvToCode ( assmblr, elements, cmd, &cmd_code, arg );
+//         PROC_STATUS_CHECK
+//         status = ArgConvToCode ( assmblr, &cmd_code, arg, &arg_code );
+//         PROC_STATUS_CHECK
+
+//         assmblr->cmd_buffer[cmd_ind] = cmd_code;
+//         assmblr->cmd_buffer[cmd_ind + 1] = arg_code;
+
+//         cmd_ind += 2;
+
+//     }
+
+//     free(cmd_line);
+
+// }
+
+/*-----------------------------------------------------------------------------------------------*/
+
+Proc_Err_t AsmblrScanFile ( Cmd_Assemblr_t* assmblr ) {
 
     Proc_Err_t status = Proc_Err_t::PRC_SUCCSESFUL;
 
-    char* cmd_line = (char*) calloc ( max_cmd_line_size, sizeof(char) );
+    INIT_CMD_LINE ( line_info )
 
-    int cmd_ind = assmblr->spec_param_num;
-
-    while ( fgets ( cmd_line, max_cmd_line_size, stream ) ) {
-
-        char cmd[max_cmd_size] = {0};
-        char arg[max_cmd_size] = {0};
-
-        int  cmd_code = 0;
-        long arg_code = 0;
-        int  elements = 0;
+    char* line = strtok ( assmblr->fread_buffer, "\n" );
+    line_info.cmd = (char*) calloc ( max_cmd_size, sizeof(char) );
+    line_info.arg = (char*) calloc ( max_cmd_size, sizeof(char) );
+    
+    while (line != NULL && line_info.cmd_line_num < assmblr->cmd_num) {
         
-        elements = sscanf ( cmd_line, "%s %s", cmd, arg );
+        if (line[0] != '\0') {
+            
+        line_info.elements = sscanf ( (const char*)line, "%s %s", line_info.cmd, line_info.arg );
 
-        if ( elements == -1 ) {
-            (*cmd_num)--;
-            continue;
-        }
 
-        if ( IsLabel(cmd) ) {
-
-            int label_ind = atoi ( (const char*)( cmd + sizeof(char) ) );
-            assmblr->labels[label_ind] = (cmd_ind - assmblr->spec_param_num)/2;
-
-            (*cmd_num)--;
-            continue;
 
         }
+        
+        line = strtok(NULL, "\n");
+    }
 
-        status = CmdConvToCode ( assmblr ,elements, cmd, &cmd_code, arg );
-        PROC_STATUS_CHECK
-        status = ArgConvToCode ( assmblr, &cmd_code, arg, &arg_code );
-        PROC_STATUS_CHECK
+    assmblr->cmd_num = line_info.cmd_line_num;
 
-        assmblr->cmd_buffer[cmd_ind] = cmd_code;
-        assmblr->cmd_buffer[cmd_ind + 1] = arg_code;
+    return status;
 
-        cmd_ind += 2;
+}
+
+/*-----------------------------------------------------------------------------------------------*/
+
+Proc_Err_t HandleNonCmdCases ( Cmd_Line_t* line_info, Cmd_Assemblr_t* assmblr ) {
+
+    Proc_Err_t status = Proc_Err_t::PRC_SUCCSESFUL;
+
+    status = ProcessCmdToken ( line_info, assmblr );
+    PROC_STATUS_CHECK
+
+    status = ProcessArgToken ( line_info, assmblr );
+    PROC_STATUS_CHECK
+
+    return status;
+
+}
+
+/*-----------------------------------------------------------------------------------------------*/
+
+Proc_Err_t ProcessCmdToken ( Cmd_Line_t* line_info, Cmd_Assemblr_t* assmblr ) {
+
+    Proc_Err_t status = Proc_Err_t::PRC_SUCCSESFUL;
+
+    if ( checkLable ( line_info->cmd ) ) {
+
+        int label_ind = atoi ( (const char*)( line_info->cmd + sizeof(char) ) );
+        assmblr->labels[label_ind] = line_info->cmd_line_num; //не line num а cmd ind в массиве исполняемых команд
+        return Proc_Err_t::PRC_SUCCSESFUL;
 
     }
 
-    free(cmd_line);
+}
+
+/*-----------------------------------------------------------------------------------------------*/
+
+Proc_Err_t ProcessArgToken ( Cmd_Line_t* line_info, Cmd_Assemblr_t* assmblr ) {
+
+
 
 }
 
@@ -171,22 +245,6 @@ Proc_Err_t ArgConvToCode ( Cmd_Assemblr_t* assmblr, int* cmd_code, char* arg, lo
 
             *arg_code = arg[2] - 'A';
             REG_EXISTANCE_CHECK
-
-    }
-
-}
-
-/*-----------------------------------------------------------------------------------------------*/
-
-int IsLabel ( const char* arg ) {
-
-    if ( arg[0] == ':'  && isdigit(arg[1]) ) {
-
-        return 1;
-
-    } else {
-
-        return 0;
 
     }
 
