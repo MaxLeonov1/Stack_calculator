@@ -44,7 +44,7 @@ Proc_Err_t CmdAssmblr ( const char* input_file_name, const char* output_file_nam
 
 /*-----------------------------------------------------------------------------------------------*/
 
-Proc_Err_t AsmblrScanFile ( Cmd_Assemblr_t* assmblr, FILE* stream, long* cmd_num ) {
+Proc_Err_t AsmblrScanFile ( Cmd_Assemblr_t* assmblr, FILE* stream, long* cmd_num ) { //TODO переделать под онегина
 
     Proc_Err_t status = Proc_Err_t::PRC_SUCCSESFUL;
 
@@ -78,7 +78,7 @@ Proc_Err_t AsmblrScanFile ( Cmd_Assemblr_t* assmblr, FILE* stream, long* cmd_num
 
         }
 
-        status = CmdConvToCode ( elements, cmd, &cmd_code, arg );
+        status = CmdConvToCode ( assmblr ,elements, cmd, &cmd_code, arg );
         PROC_STATUS_CHECK
         status = ArgConvToCode ( assmblr, &cmd_code, arg, &arg_code );
         PROC_STATUS_CHECK
@@ -111,13 +111,13 @@ Proc_Err_t AsmblrPrintFile ( Cmd_Assemblr_t* assmblr, FILE* stream, long cmd_num
 
 /*-----------------------------------------------------------------------------------------------*/
 
-Proc_Err_t CmdConvToCode ( int elements, char* cmd, int* cmd_code, char* arg ) {
+Proc_Err_t CmdConvToCode ( Cmd_Assemblr_t* assmblr, int elements, char* cmd, int* cmd_code, char* arg ) {
 
     Proc_Err_t status = Proc_Err_t::PRC_SUCCSESFUL;
 
     for ( size_t ind = 0; ind < sizeof(Asmblr_Cmd_Instr) / sizeof(Asmblr_Cmd_Instr[0]); ind++ ) {
 
-        if ( strcmp ( cmd, Asmblr_Cmd_Instr[ind].name) == 0 ) { 
+        if ( strcmp ( cmd, Asmblr_Cmd_Instr[ind].name ) == 0 ) { //TODO хэш с bin поиском 
 
             *cmd_code = Asmblr_Cmd_Instr[ind].cmd_code;
             //printf ( "cmd: %s\n", Asmblr_Cmd_Instr[ind].name );
@@ -125,7 +125,7 @@ Proc_Err_t CmdConvToCode ( int elements, char* cmd, int* cmd_code, char* arg ) {
             PROC_STATUS_CHECK
             //printf ("code: %d\n", *cmd_code);
 
-            if ( *cmd_code <= 32 )
+            if ( *cmd_code <= assmblr->def_cmd_num )
                 if ( (  Asmblr_Cmd_Instr[ind].is_arg && elements < 2 ) ||
                      ( !Asmblr_Cmd_Instr[ind].is_arg && elements > 1 ))
                     return Proc_Err_t::INCOR_ARG_NUM_ERR;

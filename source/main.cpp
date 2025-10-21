@@ -12,8 +12,8 @@
 int main ( int argc, char const *argv[] )
 {
 
-    const char* input_filename = "examples/factorial.txt";
-    const char* byte_filename  = "examples/perform_factorial.bin";
+    const char* input_filename = "examples/circle.txt"; //TODO ввод названия из командной строки
+    const char* byte_filename  = "examples/perform.bin";
 
     Stack_Err_t stack_status = Stack_Err_t::STK_SUCCSESFUL;
     Proc_Err_t  proc_status  = Proc_Err_t::PRC_SUCCSESFUL;

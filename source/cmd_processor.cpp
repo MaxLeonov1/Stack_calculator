@@ -50,11 +50,11 @@ Proc_Err_t ProcessCmds ( Cmd_Proc* processor, Stack_Err_t* stk_status ) {
 
     Proc_Err_t status = Proc_Err_t::PRC_SUCCSESFUL;
 
-    while ( processor->cur_com_ind < processor->cmd_num ) {
+    while ( processor->cur_com_ind < processor->cmd_num ) { //TODO сделать сдвиг зависящий от команды
 
         int cmd_code = (int)(processor->cmd_buffer[2*processor->cur_com_ind + 1]);
         STK_ELM_TYPE argument = processor->cmd_buffer[2*processor->cur_com_ind + 2];
-        processor->cur_com_ind++;
+        processor->cur_com_ind++; 
 
         //printf ( "%d\n", processor->cur_com_ind );
         //printf ( "%d %ld\n", cmd_code, argument );
@@ -77,7 +77,7 @@ Stack_Err_t CmdHandler ( Cmd_Proc* processor , int cmd_code, STK_ELM_TYPE argume
 
     Stack_Err_t status = Stack_Err_t::STK_SUCCSESFUL;
 
-    switch ( cmd_code ) {
+    switch ( cmd_code ) { //TODO структуры с указателями на функции
 
         case InterpretCmds::PUSH:
         {

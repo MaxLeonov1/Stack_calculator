@@ -16,29 +16,31 @@ typedef struct {
 
     /*PROC_INFO*/
 
-    int proc_reg_num;
+    const int proc_reg_num;
+    const int def_cmd_num;
 
 } Cmd_Assemblr_t;
 
 #define ASSMBLR( name ) Cmd_Assemblr_t name = { \
-.cmd_buffer = nullptr, \
-.labels = {-1}, \
-.spec_param_num = 1, \
-.proc_reg_num = 10, };
+.cmd_buffer = nullptr,                          \
+.labels = {-1},                                 \
+.spec_param_num = 1,                            \
+.proc_reg_num = 10,                             \
+.def_cmd_num = 32 };                            \
 
 /*-------------------------------------------------------------------------------------------------------------------*/
 /*=================================================MAIN=FUNCTIONS====================================================*/
 /*-------------------------------------------------------------------------------------------------------------------*/
 
 Proc_Err_t CmdAssmblr      ( const char* input_file_name, const char* output_file_name, Cmd_Assemblr_t* assmblr );
-Proc_Err_t CmdConvToCode   ( int elements, char* command, int* cmd_code, char* arg );
+Proc_Err_t CmdConvToCode   ( Cmd_Assemblr_t* assmblr, int elements, char* command, int* cmd_code, char* arg );
 Proc_Err_t ArgConvToCode   ( Cmd_Assemblr_t* assmblr, int* cmd_code, char* arg, long* arg_code );
 Proc_Err_t AsmblrScanFile  ( Cmd_Assemblr_t* assmblr, FILE* stream, long* cmd_num );
 Proc_Err_t AsmblrPrintFile ( Cmd_Assemblr_t* assmblr, FILE* stream, long cmd_num );
 
 /*-------------------------------------------------------------------------------------------------------------------*/
 
-int IsLabel               ( const char* arg );
+int IsLabel ( const char* arg );
 Proc_Err_t ResolveCmdCode ( char* arg, int* cmd_code );
 
 /*-------------------------------------------------------*/
