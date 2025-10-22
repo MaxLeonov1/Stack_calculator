@@ -3,7 +3,7 @@
 
 #include "error_handler.h"
 #include "stack_creation.h"
-
+#include "general_instructions.h"
 
 
 typedef struct {
@@ -22,42 +22,7 @@ typedef struct {
 
 } Cmd_Proc;
 
-/*-------------------------------------------------------*/
-
-typedef enum { //just for understanding cmd in handler cases
-
-    NULL_CMD = 0,
-    PUSH  = 1,
-    POP   = 2,
-    SUM   = 3,
-    SUB   = 4,
-    DIV   = 5,
-    MULT  = 6,
-    SQRT  = 7,
-    OUT   = 8,
-    HLT   = 9,
-    IN    = 10,
-    PAUSE = 11,
-    JMP   = 12,
-    JB    = 13,
-    JBE   = 14,
-    JA    = 15,
-    JAE   = 16,
-    JE    = 17,
-    JNE   = 18,
-    PRTS  = 19,
-    CALL  = 20,
-    RET   = 21,
-    DRAW  = 22,
-    SIN   = 23,
-    COS   = 24,
-    PUSHR = 33,
-    POPR  = 34,
-    PRTR  = 35,
-    PUSHM = 65,
-    POPM  = 66,
-
-} InterpretCmds;
+/*---------------------------------------------------------------------------------------*/
 
 Stack_Err_t CmdHandler      ( Cmd_Proc* processor , int cmd_code, STK_ELM_TYPE argument );
 Proc_Err_t  CmdProcessor    ( const char* input_file_name,  Stack_Err_t stk_status );

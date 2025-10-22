@@ -4,10 +4,13 @@
 #include <ctype.h>
 
 #include "error_handler.h"
+#include "general_instructions.h"
 
 /*-------------------------------------------------------*/
 
 typedef struct {
+
+    Cmd_Instr* cmd_instr;
 
     char* fread_buffer;
     STK_ELM_TYPE* cmd_buffer;
@@ -24,8 +27,9 @@ typedef struct {
 } Cmd_Assemblr_t;
 
 #define INIT_ASM(name) Cmd_Assemblr_t name = { \
-    .fread_buffer = NULL,                      \
-    .cmd_buffer = NULL,                        \
+    .cmd_instr = nullptr,                      \
+    .fread_buffer = nullptr,                   \
+    .cmd_buffer = nullptr,                     \
     .file_lines_num = 0,                       \
     .cmd_num = 0,                              \
     .lables_num = 10,                          \
@@ -33,54 +37,6 @@ typedef struct {
     .spec_param_num = 1,                       \
     .proc_reg_num = 10,                        \
     .def_cmd_num = 32 };
-
-/*-------------------------------------------------------*/
-/*========+INSTRUCTIONS=FOR=COMMANDS=HANDLING============*/
-/*-------------------------------------------------------*/
-
-typedef struct {
-
-    const char* name;
-    const int cmd_code;
-    const int is_arg;
-
-} Cmd_Instr;
-
-static Cmd_Instr Asmblr_Cmd_Instr[] = {
-
-    {.name = "PUSH",  .cmd_code = 1,  .is_arg = 1 },
-    {.name = "POP",   .cmd_code = 2,  .is_arg = 0 },
-    {.name = "SUM",   .cmd_code = 3,  .is_arg = 0 },
-    {.name = "SUB",   .cmd_code = 4,  .is_arg = 0 },
-    {.name = "DIV",   .cmd_code = 5,  .is_arg = 0 },
-    {.name = "MULT",  .cmd_code = 6,  .is_arg = 0 },
-    {.name = "SQRT",  .cmd_code = 7,  .is_arg = 0 },
-    {.name = "OUT",   .cmd_code = 8,  .is_arg = 0 },
-    {.name = "HLT",   .cmd_code = 9,  .is_arg = 0 },
-    {.name = "IN",    .cmd_code = 10, .is_arg = 0 },
-    {.name = "PAUSE", .cmd_code = 11, .is_arg = 0 },
-    {.name = "JMP",   .cmd_code = 12, .is_arg = 1 },
-    {.name = "JB",    .cmd_code = 13, .is_arg = 1 },
-    {.name = "JBE",   .cmd_code = 14, .is_arg = 1 },
-    {.name = "JA",    .cmd_code = 15, .is_arg = 1 },
-    {.name = "JAE",   .cmd_code = 16, .is_arg = 1 },
-    {.name = "JE" ,   .cmd_code = 17, .is_arg = 1 },
-    {.name = "JNE",   .cmd_code = 18, .is_arg = 1 },
-    {.name = "PRTS",  .cmd_code = 19, .is_arg = 0 },
-    {.name = "CALL",  .cmd_code = 20, .is_arg = 1 },
-    {.name = "RET",   .cmd_code = 21, .is_arg = 0 },
-    {.name = "DRAW",  .cmd_code = 22, .is_arg = 0 },
-    {.name = "SIN",   .cmd_code = 23, .is_arg = 0 },
-    {.name = "COS",   .cmd_code = 24, .is_arg = 0 },
-
-    {.name = "PUSHR", .cmd_code = 33, .is_arg = 1 },
-    {.name = "POPR",  .cmd_code = 34, .is_arg = 1 },
-    {.name = "PRTR",  .cmd_code = 35, .is_arg = 1 },
-
-    {.name = "PUSHM", .cmd_code = 65, .is_arg = 1 },
-    {.name = "POPM",  .cmd_code = 66, .is_arg = 1 },
-
-};
 
 /*-------------------------------------------------------------------------------------------------------------------*/
 /*========================================ARGUMENT=HANDLERS=AND=CHECKERS=============================================*/

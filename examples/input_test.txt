@@ -1,7 +1,11 @@
 :1
 
-PUSH 0
+PUSH #essential comment
 POP RCX
-HLT # abober
+OUT 
+OUT #ver
+HLT 
+
+#verdfdf
 
 #abober

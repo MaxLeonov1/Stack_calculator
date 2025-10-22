@@ -6,9 +6,28 @@
 #include "cmd_asemblr.h"
 #include "support_functions.h"
 #include "error_handler.h"
+#include "general_instructions.h"
 
-const size_t max_cmd_line_size = 100;
+const size_t max_cmd_num = 96;
 const size_t max_cmd_size = 20;
+
+/*-----------------------------------------------------------------------------------------------*/
+
+Proc_Err_t RunAssmblr ( const char* input_file_name, const char* output_file_name ) {
+
+    Proc_Err_t status = Proc_Err_t::PRC_SUCCSESFUL;
+    INIT_ASM ( assmblr )
+
+    assmblr.cmd_instr = (Cmd_Instr*) calloc ( max_cmd_num, sizeof(Cmd_Instr) );
+    CreateInstructionsTable ( assmblr.cmd_instr );
+
+    status = CmdAssmblr ( input_file_name, output_file_name, &assmblr );
+    PROC_STATUS_CHECK
+
+    free ( assmblr.cmd_instr );
+    return status;
+
+}
 
 /*-----------------------------------------------------------------------------------------------*/
 
@@ -30,7 +49,11 @@ Proc_Err_t CmdAssmblr ( const char* input_file_name, const char* output_file_nam
     fread ( assmblr->fread_buffer, sizeof(char), (size_t)file_info.byte_num + 5, input_file );
     assmblr->cmd_buffer = (STK_ELM_TYPE*) calloc ( 2*file_info.line_num, sizeof(STK_ELM_TYPE) );
 
-    AsmblrScanFile( assmblr );
+    status = AsmblrScanFile( assmblr );
+    PROC_STATUS_CHECK
+
+    status = AsmblrScanFile( assmblr );
+    PROC_STATUS_CHECK
 
     // assmblr->cmd_buffer[0] = cmd_num;
 
@@ -112,16 +135,16 @@ Proc_Err_t AsmblrScanFile ( Cmd_Assemblr_t* assmblr ) {
         
         if (line[0] != '\0') {
             
-        line_info.elements = sscanf ( (const char*)line, "%s %s", line_info.cmd, line_info.arg );
+            line_info.elements = sscanf ( (const char*)line, "%s %s", line_info.cmd, line_info.arg );
 
-        status = HandleNonCmdCases ( &line_info, assmblr );
-        PROC_STATUS_CHECK
+            status = HandleNonCmdCases ( &line_info, assmblr );
+            PROC_STATUS_CHECK
 
             if ( (line_info.is_cmd == 1) && (line_info.is_comment == 0) ) {
 
                 status = CmdConvToCode ( assmblr, &line_info );
                 PROC_STATUS_CHECK
-
+                
                 status = ArgConvToCode ( assmblr, &line_info );
                 PROC_STATUS_CHECK
 
@@ -147,8 +170,10 @@ Proc_Err_t HandleNonCmdCases ( Cmd_Line_t* line_info, Cmd_Assemblr_t* assmblr ) 
     status = ProcessCmdToken ( line_info, assmblr );
     PROC_STATUS_CHECK
 
-    status = ProcessArgToken ( line_info, assmblr );
-    PROC_STATUS_CHECK
+    if ( line_info->elements > 1 ) {
+        status = ProcessArgToken ( line_info, assmblr );
+        PROC_STATUS_CHECK
+    }
 
     return status;
 
@@ -187,10 +212,9 @@ Proc_Err_t ProcessCmdToken ( Cmd_Line_t* line_info, Cmd_Assemblr_t* assmblr ) {
 /*-----------------------------------------------------------------------------------------------*/
 
 Proc_Err_t ProcessArgToken ( Cmd_Line_t* line_info, Cmd_Assemblr_t* assmblr ) {
-
+    
     if ( checkComment ( line_info->arg ) ) {
 
-        line_info->arg = nullptr;
         line_info->elements--;
         return Proc_Err_t::PRC_SUCCSESFUL;
 
@@ -221,19 +245,19 @@ Proc_Err_t CmdConvToCode ( Cmd_Assemblr_t* assmblr, Cmd_Line_t* line_info ) {
 
     Proc_Err_t status = Proc_Err_t::PRC_SUCCSESFUL;
 
-    for ( size_t ind = 0; ind < sizeof(Asmblr_Cmd_Instr) / sizeof(Asmblr_Cmd_Instr[0]); ind++ ) {
+    for ( size_t ind = 0; ind < sizeof(Cmd_Interpret_Instr) / sizeof(Cmd_Interpret_Instr[0]); ind++ ) {
 
-        if ( strcmp ( line_info->cmd, Asmblr_Cmd_Instr[ind].name ) == 0 ) { //TODO хэш с bin поиском 
+        if ( strcmp ( line_info->cmd, Cmd_Interpret_Instr[ind].name ) == 0 ) { //TODO хэш с bin поиском 
 
-            line_info->cmd_code = Asmblr_Cmd_Instr[ind].cmd_code;
+            line_info->cmd_code = Cmd_Interpret_Instr[ind].cmd_code;
             //printf ( "cmd: %s\n", Asmblr_Cmd_Instr[ind].name );
             status = ResolveCmdCode ( line_info->arg, &line_info->cmd_code );
             PROC_STATUS_CHECK
             //printf ("code: %d\n", *cmd_code);
 
             if ( line_info->cmd_code <= assmblr->def_cmd_num )
-                if ( (  Asmblr_Cmd_Instr[ind].is_arg && line_info->elements < 2 ) ||
-                     ( !Asmblr_Cmd_Instr[ind].is_arg && line_info->elements > 1 ))
+                if ( (  Cmd_Interpret_Instr[ind].is_arg && line_info->elements < 2 ) ||
+                     ( !Cmd_Interpret_Instr[ind].is_arg && line_info->elements > 1 ))
                     return Proc_Err_t::INCOR_ARG_NUM_ERR;
 
             return Proc_Err_t::PRC_SUCCSESFUL;
