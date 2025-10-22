@@ -12,6 +12,7 @@ typedef enum {
     MEM_ALLOCATE_ERR = 6,
     UNDEF_ARG_ERR = 7,
     INCOR_ARG_ERR = 8,
+    INCOR_LABLE_NUM = 9,
 
 } Proc_Err_t;
 
@@ -31,8 +32,8 @@ typedef enum {
 #define STK_STATUS_CHECK if ( status != Stack_Err_t::STK_SUCCSESFUL ) return status;
 #define PROC_STATUS_CHECK if ( status != Proc_Err_t::PRC_SUCCSESFUL ) return status;
 
-#define REG_EXISTANCE_CHECK                                   \
-if ( *arg_code >= 0 && *arg_code < assmblr->proc_reg_num )    \
+#define REG_EXISTANCE_CHECK( arg_code )                       \
+if ( arg_code >= 0 && arg_code < assmblr->proc_reg_num )    \
     return Proc_Err_t::PRC_SUCCSESFUL;                        \
 else return Proc_Err_t::UNDEF_REGISTR_NUM_ERR;                \
 

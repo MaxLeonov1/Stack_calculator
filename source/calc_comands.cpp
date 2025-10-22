@@ -351,7 +351,7 @@ Stack_Err_t JumpIf ( Cmd_Proc* processor, long cmd_ind, Cmd_Jump_t type ) {
     status = StackPop ( &processor->proc_stk, &element_1 );
     STK_STATUS_CHECK
 
-    switch ( type ){
+    switch ( type ){ //TODO case поменьше
 
         case Cmd_Jump_t::BELOW:
             if ( element_1 < element_2 ) status = JumpToCmd ( processor, cmd_ind );

@@ -3,6 +3,8 @@
         "vector": "cpp",
         "complex": "cpp",
         "random": "cpp",
-        "tuple": "cpp"
+        "tuple": "cpp",
+        "typeindex": "cpp",
+        "typeinfo": "cpp"
     }
 }
