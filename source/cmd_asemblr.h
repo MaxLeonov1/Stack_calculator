@@ -10,7 +10,12 @@
 
 typedef struct {
 
-    Cmd_Instr* cmd_instr;
+    size_t max_cmd_instr_num;
+    size_t cmd_instr_num;
+
+    Cmd_Instr* instr_general;
+    Cmd_Instr* instr_sort_code;
+    Cmd_Instr* instr_sort_hash;
 
     char* fread_buffer;
     STK_ELM_TYPE* cmd_buffer;
@@ -27,7 +32,11 @@ typedef struct {
 } Cmd_Assemblr_t;
 
 #define INIT_ASM(name) Cmd_Assemblr_t name = { \
-    .cmd_instr = nullptr,                      \
+    .max_cmd_instr_num = 96,                   \
+    .cmd_instr_num = 0,                        \
+    .instr_general = nullptr,                  \
+    .instr_sort_code = nullptr,                \
+    .instr_sort_hash = nullptr,                \
     .fread_buffer = nullptr,                   \
     .cmd_buffer = nullptr,                     \
     .file_lines_num = 0,                       \
@@ -51,11 +60,12 @@ typedef struct {
     int elements;
     int is_cmd;
     int is_comment;
+    int has_arg;
     int cmd_line_num;
 
 } Cmd_Line_t;
 
-#define INIT_CMD_LINE( name ) Cmd_Line_t name = { nullptr, nullptr, 0, 0, 0, 0, 0, 0 };
+#define INIT_CMD_LINE( name ) Cmd_Line_t name = { nullptr, nullptr, 0, 0, 0, 0, 0, 0, 0 };
 
 typedef struct {
 
@@ -149,6 +159,7 @@ static ArgHandler Handlers[] = {
 /*=================================================MAIN=FUNCTIONS====================================================*/
 /*-------------------------------------------------------------------------------------------------------------------*/
 
+Proc_Err_t RunAssmblr        ( const char* input_file_name, const char* output_file_name );
 Proc_Err_t CmdAssmblr        ( const char* input_file_name, const char* output_file_name, Cmd_Assemblr_t* assmblr );
 Proc_Err_t CmdConvToCode     ( Cmd_Assemblr_t* assmblr, Cmd_Line_t* line_info );
 Proc_Err_t ArgConvToCode     ( Cmd_Assemblr_t* assmblr, Cmd_Line_t* line_info );
@@ -156,7 +167,7 @@ Proc_Err_t AsmblrScanFile    ( Cmd_Assemblr_t* assmblr );
 Proc_Err_t HandleNonCmdCases ( Cmd_Line_t* line_info, Cmd_Assemblr_t* assmblr );
 Proc_Err_t ProcessCmdToken   ( Cmd_Line_t* line_info, Cmd_Assemblr_t* assmblr );
 Proc_Err_t ProcessArgToken   ( Cmd_Line_t* line_info, Cmd_Assemblr_t* assmblr );
-Proc_Err_t AsmblrPrintFile   ( Cmd_Assemblr_t* assmblr, FILE* stream, long cmd_num );
+Proc_Err_t AsmblrPrintFile   ( Cmd_Assemblr_t* assmblr, FILE* stream );
 
 /*-------------------------------------------------------------------------------------------------------------------*/
 

@@ -1,6 +1,6 @@
 :1
 
-PUSH #essential comment
+PUSH 1     #essential comment
 POP RCX
 OUT 
 OUT #ver

@@ -21,7 +21,7 @@ int main ( int argc, char const *argv[] )
 
     INIT_ASM ( assmblr )
 
-    proc_status = CmdAssmblr ( input_filename, byte_filename, &assmblr );
+    proc_status = RunAssmblr ( input_filename, byte_filename );
     ProcErrHandler ( proc_status );
 
     // proc_status = CmdProcessor ( byte_filename, stack_status );

@@ -85,7 +85,4 @@ static Cmd_Instr Cmd_Interpret_Instr[] = {
 };
 
 
-void CreateInstructionsTable(Cmd_Instr* Cmd_Proc_Instr);
-
-
 #endif //__INSTRUCTIONS__
