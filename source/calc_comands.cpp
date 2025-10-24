@@ -434,8 +434,6 @@ Stack_Err_t PrintRegValue ( Cmd_Proc* processor, int reg_num ) {
 
 /*-----------------------------------------------------------------------------------------------*/
 
-#include <windows.h>
-
 Stack_Err_t DrawVideoMemory ( Cmd_Proc* processor ) {
 
     //printf("%d\n",processor->ram_size);

@@ -117,6 +117,9 @@ Proc_Err_t AsmblrScanFile ( Cmd_Assemblr_t* assmblr ) {
                 //printf("%d\n", assmblr->cmd_num);
                 //printf ( "%d %d\n", assmblr->cmd_buffer[assmblr->cmd_num-2], assmblr->cmd_buffer[assmblr->cmd_num-1] );
 
+                // line_info.cmd = nullptr;
+                // line_info.arg = nullptr;
+
             }
 
         }
@@ -219,9 +222,6 @@ Proc_Err_t CmdConvToCode ( Cmd_Assemblr_t* assmblr, Cmd_Line_t* line_info ) {
     line_info->cmd_code = assmblr->instr_sort_hash[cmd_ind].cmd_code;
 
     status = ResolveCmdCode ( line_info->arg, &line_info->cmd_code );
-    PROC_STATUS_CHECK
-
-    //printf ( "%d %d\n", assmblr->instr_sort_hash[cmd_ind].is_arg, assmblr->instr_sort_hash[cmd_ind].cmd_code );
 
     line_info->has_arg  = assmblr->instr_sort_code[line_info->cmd_code].is_arg;
 
@@ -229,7 +229,7 @@ Proc_Err_t CmdConvToCode ( Cmd_Assemblr_t* assmblr, Cmd_Line_t* line_info ) {
         if ( (  assmblr->instr_sort_hash[cmd_ind].is_arg && line_info->elements < 2 ) ||
              ( !assmblr->instr_sort_hash[cmd_ind].is_arg && line_info->elements > 1 ))
                 return Proc_Err_t::INCOR_ARG_NUM_ERR;
-    
+
     return status;
 
 }

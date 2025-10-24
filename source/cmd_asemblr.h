@@ -102,20 +102,9 @@ static bool checkComment  ( const char* arg ) { return ( arg[0] == '#' ); }
 
 static Proc_Err_t handleLable ( Cmd_Assemblr_t* assmblr, const char* arg, long* arg_code ) {
 
-    int label_ind = atoi ( (const char*)( arg + sizeof(char) ) );
+    int label_ind = atoi ( arg + sizeof(char) );
     *arg_code = assmblr->labels[label_ind];
     return Proc_Err_t::PRC_SUCCSESFUL;
-
-}
-
-static Proc_Err_t handleRegister ( Cmd_Assemblr_t* assmblr, const char* arg, long* arg_code ) {
-
-    if ( ( arg[1] - 'A' >= 0 ) && ( arg[1] - 'A' <= assmblr->proc_reg_num ) ) {
-
-        *arg_code = arg[1] - 'A';
-        return Proc_Err_t::PRC_SUCCSESFUL;
-
-    } else return Proc_Err_t::UNDEF_REGISTR_NUM_ERR;
 
 }
 
@@ -130,18 +119,6 @@ static Proc_Err_t handleNoArg ( Cmd_Assemblr_t* assmblr, const char* arg, long* 
 
     *arg_code = 0;
     return Proc_Err_t::PRC_SUCCSESFUL;
-
-}
-
-static Proc_Err_t handleMemArg ( Cmd_Assemblr_t* assmblr, const char* arg, long* arg_code ) {
-
-    if ( ( arg[2] - 'A' >= 0 ) && ( arg[2] - 'A' <= assmblr->proc_reg_num ) ) {
-
-        *arg_code = arg[2] - 'A';
-        return Proc_Err_t::PRC_SUCCSESFUL;
-
-    } else return Proc_Err_t::UNDEF_REGISTR_NUM_ERR;
-
 
 }
 
