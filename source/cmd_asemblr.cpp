@@ -49,7 +49,7 @@ Proc_Err_t CmdAssmblr ( const char* input_file_name, const char* output_file_nam
 
     assmblr->fread_buffer = (char*) calloc ( (size_t)file_info.byte_num, sizeof(char) );
     fread ( assmblr->fread_buffer, sizeof(char), (size_t)file_info.byte_num + 5, input_file );
-    assmblr->cmd_buffer = (STK_ELM_TYPE*) calloc ( 2*file_info.line_num, sizeof(STK_ELM_TYPE) );
+    assmblr->cmd_buffer = (long*) calloc ( 2*file_info.line_num, sizeof(STK_ELM_TYPE) );
 
     assmblr->cmd_num = assmblr->spec_param_num;
 
@@ -89,9 +89,9 @@ Proc_Err_t AsmblrScanFile ( Cmd_Assemblr_t* assmblr ) {
     
     while (line != NULL && line_info.cmd_line_num < assmblr->file_lines_num) {
         
-        if (line[0] != '\0') {
+        if (line[0] != '\0') { //TODO Переписать с поэтапным scanf %s
             
-            line_info.elements = sscanf ( (const char*)line, "%s %s", line_info.cmd, line_info.arg );
+            line_info.elements = sscanf ( (const char*)line, "%s %s", line_info.cmd, line_info.arg ); 
 
             status = HandleNonCmdCases ( &line_info, assmblr );
             PROC_STATUS_CHECK
@@ -102,7 +102,6 @@ Proc_Err_t AsmblrScanFile ( Cmd_Assemblr_t* assmblr ) {
                 PROC_STATUS_CHECK
 
                 assmblr->cmd_buffer[assmblr->cmd_num] = line_info.cmd_code;
-                printf("c: %d\n", line_info.cmd_code);
                 assmblr->cmd_num++;
 
                 if ( line_info.has_arg ) {
@@ -110,15 +109,8 @@ Proc_Err_t AsmblrScanFile ( Cmd_Assemblr_t* assmblr ) {
                     PROC_STATUS_CHECK
 
                     assmblr->cmd_buffer[assmblr->cmd_num] = line_info.arg_code;
-                    printf("a: %d\n", line_info.arg_code);
                     assmblr->cmd_num++;
                 }
-
-                //printf("%d\n", assmblr->cmd_num);
-                //printf ( "%d %d\n", assmblr->cmd_buffer[assmblr->cmd_num-2], assmblr->cmd_buffer[assmblr->cmd_num-1] );
-
-                // line_info.cmd = nullptr;
-                // line_info.arg = nullptr;
 
             }
 
@@ -207,6 +199,8 @@ Proc_Err_t AsmblrPrintFile ( Cmd_Assemblr_t* assmblr, FILE* stream ) {
 
     }
 
+    return Proc_Err_t::PRC_SUCCSESFUL;
+
 }
 
 /*-----------------------------------------------------------------------------------------------*/
@@ -221,7 +215,8 @@ Proc_Err_t CmdConvToCode ( Cmd_Assemblr_t* assmblr, Cmd_Line_t* line_info ) {
 
     line_info->cmd_code = assmblr->instr_sort_hash[cmd_ind].cmd_code;
 
-    status = ResolveCmdCode ( line_info->arg, &line_info->cmd_code );
+    if ( line_info->elements > 1 )
+        status = ResolveCmdCode ( line_info );
 
     line_info->has_arg  = assmblr->instr_sort_code[line_info->cmd_code].is_arg;
 
@@ -268,24 +263,26 @@ Proc_Err_t ArgConvToCode ( Cmd_Assemblr_t* assmblr, Cmd_Line_t* cmd_line ) {
 
     }
 
+    return Proc_Err_t::PRC_SUCCSESFUL;
+
 }
 
 /*-----------------------------------------------------------------------------------------------*/
 
-Proc_Err_t ResolveCmdCode ( char* arg, int* cmd_code ) {
+Proc_Err_t ResolveCmdCode ( Cmd_Line_t* line_info ) {
 
-    if ( arg[0] == 'R' && arg[2] == 'X' ) {
+    if ( line_info->arg[0] == 'R' && line_info->arg[2] == 'X' ) {
 
-        if ( *cmd_code < 32 ) *cmd_code += 32;
-        else if ( *cmd_code > 64 ) return Proc_Err_t::INCOR_ARG_ERR;
+        if ( line_info->cmd_code < 32 ) line_info->cmd_code += 32;
+        else if ( line_info->cmd_code > 64 ) return Proc_Err_t::INCOR_ARG_ERR;
     
     }
 
-    if ( arg[0] == '[' && arg[4] == ']' &&
-         arg[1] == 'R' && arg[3] == 'X' ) {
+    if ( line_info->arg[0] == '[' && line_info->arg[4] == ']' &&
+         line_info->arg[1] == 'R' && line_info->arg[3] == 'X' ) {
 
-        if ( *cmd_code < 32 ) *cmd_code += 64;
-        else if ( *cmd_code < 64 ) return Proc_Err_t::INCOR_ARG_ERR;
+        if ( line_info->cmd_code < 32 ) line_info->cmd_code += 64;
+        else if ( line_info->cmd_code < 64 ) return Proc_Err_t::INCOR_ARG_ERR;
 
     }
 

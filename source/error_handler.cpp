@@ -114,8 +114,8 @@ void StackDump ( Stack_t* stack ) {
     printf ( "=========================\n"
              "stack [%s%p%s]\n"
              "-------------------------\n"
-             "size = %s%d%s\n"
-             "capacity = %s%d%s\n"
+             "size = %s%lu%s\n"
+             "capacity = %s%lu%s\n"
              "data [%s%p%s]\n"
              "-------------------------\n",
              BLUE, stack, RES_COL,
@@ -141,14 +141,14 @@ void PrintStackElements ( Stack_t* stack ) {
 
         if ( ind < stack->size ) {
 
-            printf ( "* [%d] = %s%lf%s %s%s%s\n", 
+            printf ( "* [%lu] = %s%lf%s %s%s%s\n", 
                      ind,
                      BLUE, stack->data[ind], RES_COL,
                      RED, DataSpecialParamHandler ( stack->data[ind] ), RES_COL );
 
         } else {
 
-            printf ( "  [%d] = %s%lf%s %s%s%s\n",
+            printf ( "  [%lu] = %s%lf%s %s%s%s\n",
                      ind,
                      BLUE, stack->data[ind], RES_COL,
                      RED, DataSpecialParamHandler ( stack->data[ind] ), RES_COL );

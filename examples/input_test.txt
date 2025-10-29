@@ -2,7 +2,7 @@
 
 PUSH 1     #essential comment
 POP RCX
-OUT 
+OUT RCX
 OUT #ver
 HLT 
 

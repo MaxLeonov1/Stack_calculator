@@ -18,16 +18,16 @@ typedef struct {
     Cmd_Instr* instr_sort_hash;
 
     char* fread_buffer;
-    STK_ELM_TYPE* cmd_buffer;
+    long* cmd_buffer;
 
-    long file_lines_num;
-    long cmd_num;
-    int lables_num;
-    int labels[10];
-    int spec_param_num;
+    size_t file_lines_num;
+    size_t cmd_num;
+    size_t lables_num;
+    long   labels[10];
+    size_t spec_param_num;
 
-    const int proc_reg_num;  
-    const int def_cmd_num; 
+    const int    proc_reg_num;  
+    const size_t def_cmd_num; 
 
 } Cmd_Assemblr_t;
 
@@ -55,13 +55,13 @@ typedef struct {
 
     char* cmd;
     char* arg;
-    int cmd_code;
-    long arg_code;
+    size_t cmd_code;
+    long   arg_code;
     int elements;
     int is_cmd;
     int is_comment;
     int has_arg;
-    int cmd_line_num;
+    size_t cmd_line_num;
 
 } Cmd_Line_t;
 
@@ -85,11 +85,6 @@ typedef enum {
 /*-------------------------------------------------------------------------------------------------------------------*/
 
 static bool checkLable    ( const char* arg ) { return ( arg[0] == ':' ); }
-
-static bool checkRegister ( const char* arg ) { return ( arg[0] == 'R' && arg[2] == 'X' ); }
-
-static bool checkMemArg   ( const char* arg ) { return ( arg[0] == '[' && arg[4] == ']' &&
-                                                         arg[1] == 'R' && arg[3] == 'X' ); }
 
 static bool checkNumber   ( const char* arg ) { return ( isdigit(arg[0]) ||
                                                        ( arg[0] == '-' && isdigit(arg[1]) ) ); }
@@ -148,7 +143,7 @@ Proc_Err_t AsmblrPrintFile   ( Cmd_Assemblr_t* assmblr, FILE* stream );
 
 /*-------------------------------------------------------------------------------------------------------------------*/
 
-Proc_Err_t ResolveCmdCode ( char* arg, int* cmd_code );
+Proc_Err_t ResolveCmdCode ( Cmd_Line_t* line_info );
 
 /*-------------------------------------------------------------------------------------------------------------------*/
 

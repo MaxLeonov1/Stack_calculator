@@ -12,9 +12,9 @@ typedef struct {
     STK_INIT ( call_stk )
     size_t stk_def_size = 5;
 
-    int  cur_com_ind = 0;
-    long cmd_num = 0;
-    long ram_size = 2400;
+    size_t cur_com_ind = 0;
+    size_t cmd_num = 0;
+    size_t ram_size = 2400;
 
     STK_ELM_TYPE* cmd_buffer = nullptr;
     STK_ELM_TYPE  reg_buffer[10] = {0};
