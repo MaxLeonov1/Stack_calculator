@@ -19,8 +19,6 @@ int main ( int argc, char const *argv[] )
     Stack_Err_t stack_status = Stack_Err_t::STK_SUCCSESFUL;
     Proc_Err_t  proc_status  = Proc_Err_t::PRC_SUCCSESFUL;
 
-    INIT_ASM ( assmblr )
-
     proc_status = RunAssmblr ( input_filename, byte_filename );
     ProcErrHandler ( proc_status );
 

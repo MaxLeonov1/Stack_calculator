@@ -7,8 +7,8 @@ CFLAGS=-c -Wshadow -Winit-self -Wredundant-decls -Wcast-align -Wundef -Wfloat-eq
 	   -Wstack-usage=8192 -Wstrict-aliasing -Wstrict-null-sentinel -Wtype-limits \
 	   -Wwrite-strings -Werror=vla
 
-SOURCES = main.cpp cmd_processor.cpp calc_comands.cpp stack_creation.cpp error_handler.cpp \
-support_functions.cpp cmd_asemblr.cpp
+SOURCES = source/main.cpp source/cmd_processor.cpp source/calc_comands.cpp source/stack_creation.cpp source/error_handler.cpp \
+source/support_functions.cpp source/cmd_asemblr.cpp
 
 OBJDIR = obj
 CXX = g++
